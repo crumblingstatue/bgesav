@@ -52,6 +52,19 @@ impl eframe::App for App {
             });
             if let Some(sav) = &mut self.sav {
                 ui.separator();
+                ui.heading("Map");
+                ui.horizontal(|ui| {
+                    egui::ComboBox::from_label("Current map")
+                        .selected_text(map_text(sav.current_map.0))
+                        .width(200.0)
+                        .show_ui(ui, |ui| {
+                            for i in 0..=255 {
+                                ui.selectable_value(&mut sav.current_map.0, i, map_text(i));
+                            }
+                        });
+                });
+                ui.separator();
+                ui.heading("Mdisks");
                 for en in metadata::mdisk::TABLE {
                     ui.checkbox(&mut sav.mdisks.disks[en.bit_idx as usize], en.name);
                 }
@@ -62,4 +75,8 @@ impl eframe::App for App {
             }
         });
     }
+}
+
+fn map_text(idx: u8) -> String {
+    format!("{idx}: {name}", name = metadata::map::NAMES[idx as usize])
 }

@@ -1,10 +1,11 @@
+mod mapid;
 mod mdisks;
 mod repr;
 
 use std::io::{self, Read, Seek, SeekFrom, Write};
 
-pub use self::mdisks::Mdisks;
 use self::repr::DatumRepr;
+pub use self::{mapid::MapId, mdisks::Mdisks};
 
 pub trait SaveDatum: Sized {
     const OFFSET: usize;

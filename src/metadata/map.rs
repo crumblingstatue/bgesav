@@ -211,7 +211,7 @@ pub const NAMES: [&str; 256] = [
     "Unknown",
     "Unknown",
     "Unknown",
-    "Unknown",
+    "Ming Tzu's shop",
     "Unknown",
     "Unknown",
     "Unknown",

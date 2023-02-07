@@ -62,6 +62,9 @@ impl eframe::App for App {
                                 ui.selectable_value(&mut sav.current_map.0, i, map_text(i));
                             }
                         });
+                    ui.separator();
+                    ui.label("Entry");
+                    ui.add(egui::DragValue::new(&mut sav.map_entry.0));
                 });
                 ui.separator();
                 ui.heading("Mdisks");

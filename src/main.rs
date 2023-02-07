@@ -3,7 +3,7 @@ mod metadata;
 use std::path::PathBuf;
 
 use eframe::egui;
-use libbgesav::Sav;
+use libbgesav::{Sav, SavExt};
 
 fn main() {
     let native_options = eframe::NativeOptions::default();

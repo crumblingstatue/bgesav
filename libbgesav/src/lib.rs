@@ -1,13 +1,17 @@
 mod datum;
 
 use std::{
+    borrow::Borrow,
     fs::{File, OpenOptions},
     io,
     path::Path,
 };
 
 use bgesav_derive::SavExt;
-use datum::{MapEntry, MapId, Mdisks, PartyPresent, SaveDatum};
+pub use datum::FollowState;
+use datum::{
+    DoubleHFollowState, MapEntry, MapId, Mdisks, OffsetedSaveDatum, PartyPresent, PeyjFollowState,
+};
 
 pub trait SavExt: Sized {
     fn load_from_file(path: &Path) -> io::Result<Self>;
@@ -20,4 +24,6 @@ pub struct Sav {
     pub current_map: MapId,
     pub map_entry: MapEntry,
     pub party: PartyPresent,
+    pub peyj_follow_state: PeyjFollowState,
+    pub double_h_follow_state: DoubleHFollowState,
 }

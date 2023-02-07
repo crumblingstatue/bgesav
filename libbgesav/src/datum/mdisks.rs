@@ -1,4 +1,4 @@
-use super::SaveDatum;
+use super::{OffsetedSaveDatum, SaveDatum};
 
 #[derive(Debug)]
 pub struct Mdisks {
@@ -6,7 +6,6 @@ pub struct Mdisks {
 }
 
 impl SaveDatum for Mdisks {
-    const OFFSET: usize = 600;
     type Repr = u16;
 
     fn from_repr(repr: Self::Repr) -> Self {
@@ -28,4 +27,9 @@ impl SaveDatum for Mdisks {
         }
         repr
     }
+}
+
+impl OffsetedSaveDatum for Mdisks {
+    const OFFSET: usize = 600;
+    type Datum = Self;
 }

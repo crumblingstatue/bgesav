@@ -1,5 +1,5 @@
 use eframe::egui::{self, Ui};
-use libbgesav::{Sav, SavExt};
+use libbgesav::{FollowState, Sav, SavExt};
 
 use crate::{metadata, App, Tab};
 
@@ -62,8 +62,55 @@ pub(crate) fn mdisk(sav: &mut Sav, ui: &mut Ui) {
 }
 
 pub(crate) fn party(sav: &mut Sav, ui: &mut Ui) {
-    ui.heading("Present in party");
-    ui.checkbox(&mut sav.party.peyj, "Pey'j");
-    ui.checkbox(&mut sav.party.double_h, "Double H");
-    ui.checkbox(&mut sav.party.alpha_soldier, "Alpha Soldier");
+    ui.heading("Pey'j");
+    ui.checkbox(&mut sav.party.peyj, "present");
+    follow_state_ui(0, &mut sav.peyj_follow_state.0, ui);
+    ui.heading("Double H");
+    ui.checkbox(&mut sav.party.double_h, "present");
+    follow_state_ui(1, &mut sav.double_h_follow_state.0, ui);
+    ui.heading("Alpha Soldier");
+    ui.checkbox(&mut sav.party.alpha_soldier, "present");
+    //follow_state_ui(&mut sav.peyj_follow_state.0, ui);
+}
+
+pub(crate) fn follow_state_ui(id: u8, follow_state: &mut FollowState, ui: &mut Ui) {
+    fn label(s: FollowState) -> &'static str {
+        match s {
+            FollowState::Follow => "Follow",
+            FollowState::Unknown1 => "Unknown1",
+            FollowState::Unknown2 => "Unknown2",
+            FollowState::Unknown3 => "Unknown3",
+            FollowState::Unknown4 => "Unknown4",
+        }
+    }
+
+    egui::ComboBox::new(id, "Follow state")
+        .selected_text(label(*follow_state))
+        .show_ui(ui, |ui| {
+            ui.selectable_value(
+                follow_state,
+                FollowState::Follow,
+                label(FollowState::Follow),
+            );
+            ui.selectable_value(
+                follow_state,
+                FollowState::Unknown1,
+                label(FollowState::Unknown1),
+            );
+            ui.selectable_value(
+                follow_state,
+                FollowState::Unknown2,
+                label(FollowState::Unknown2),
+            );
+            ui.selectable_value(
+                follow_state,
+                FollowState::Unknown3,
+                label(FollowState::Unknown3),
+            );
+            ui.selectable_value(
+                follow_state,
+                FollowState::Unknown4,
+                label(FollowState::Unknown4),
+            );
+        });
 }

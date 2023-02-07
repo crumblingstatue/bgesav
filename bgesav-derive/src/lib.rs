@@ -16,10 +16,10 @@ pub fn derive(input: TokenStream) -> TokenStream {
         let name = &field.ident;
         let ty = &field.ty;
         load_impl_part_1.extend(quote! {
-            let #name = #ty::read(&mut f)?;
+            let #name = #ty::from(#ty::read(&mut f)?);
         });
         load_impl_part2.extend(quote! {#name,});
-        save_impl.extend(quote!({self.#name.write(&mut f)?;}));
+        save_impl.extend(quote!({#ty::write(self.#name.borrow(), &mut f)?}));
     }
     let load_impl = quote! {
         #load_impl_part_1

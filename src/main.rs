@@ -52,7 +52,7 @@ impl eframe::App for App {
             });
             if let Some(sav) = &mut self.sav {
                 ui.separator();
-                for en in metadata::MDISK_TABLE {
+                for en in metadata::mdisk::TABLE {
                     ui.checkbox(&mut sav.mdisks.disks[en.bit_idx as usize], en.name);
                 }
                 ui.separator();

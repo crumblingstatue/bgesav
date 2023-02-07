@@ -1,9 +1,10 @@
 mod metadata;
+mod ui;
 
 use std::path::PathBuf;
 
 use eframe::egui;
-use libbgesav::{Sav, SavExt};
+use libbgesav::Sav;
 
 fn main() {
     let native_options = eframe::NativeOptions::default();
@@ -14,10 +15,27 @@ fn main() {
     );
 }
 
-#[derive(Default)]
 struct App {
     save_path: PathBuf,
     sav: Option<Sav>,
+    tab: Tab,
+}
+
+impl Default for App {
+    fn default() -> Self {
+        Self {
+            save_path: Default::default(),
+            sav: Default::default(),
+            tab: Tab::Map,
+        }
+    }
+}
+
+#[derive(PartialEq, Eq)]
+enum Tab {
+    Map,
+    Party,
+    MDisk,
 }
 
 impl App {
@@ -28,58 +46,17 @@ impl App {
 
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
+            ui::top_panel(self, ui);
+        });
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.horizontal(|ui| {
-                ui.label("File");
-                let displayed = self.save_path.display().to_string();
-                let s = if displayed.is_empty() {
-                    "<No file>".to_string()
-                } else {
-                    displayed
-                };
-                ui.label(s);
-                if ui.button("🗁 Open...").clicked() {
-                    if let Some(path) = rfd::FileDialog::default().pick_file() {
-                        let sav = Sav::load_from_file(&path).unwrap();
-                        self.sav = Some(sav);
-                        self.save_path = path;
-                    }
-                }
-                if !self.save_path.as_os_str().is_empty() && ui.button("⟲ Reload").clicked() {
-                    let sav = Sav::load_from_file(&self.save_path).unwrap();
-                    self.sav = Some(sav);
-                }
-            });
             if let Some(sav) = &mut self.sav {
-                ui.separator();
-                ui.heading("Map");
-                ui.horizontal(|ui| {
-                    egui::ComboBox::from_label("Current map")
-                        .selected_text(map_text(sav.current_map.0))
-                        .width(200.0)
-                        .show_ui(ui, |ui| {
-                            for i in 0..=255 {
-                                ui.selectable_value(&mut sav.current_map.0, i, map_text(i));
-                            }
-                        });
-                    ui.separator();
-                    ui.label("Entry");
-                    ui.add(egui::DragValue::new(&mut sav.map_entry.0));
-                });
-                ui.separator();
-                ui.heading("Mdisks");
-                for en in metadata::mdisk::TABLE {
-                    ui.checkbox(&mut sav.mdisks.disks[en.bit_idx as usize], en.name);
-                }
-                ui.separator();
-                if ui.button("Save").clicked() {
-                    sav.save_to_file(&self.save_path).unwrap();
+                match self.tab {
+                    Tab::Map => ui::map(sav, ui),
+                    Tab::Party => ui::party(sav, ui),
+                    Tab::MDisk => ui::mdisk(sav, ui),
                 }
             }
         });
     }
-}
-
-fn map_text(idx: u8) -> String {
-    format!("{idx}: {name}", name = metadata::map::NAMES[idx as usize])
 }

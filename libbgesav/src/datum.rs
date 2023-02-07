@@ -1,5 +1,6 @@
 mod map;
 mod mdisks;
+mod party;
 mod repr;
 
 use std::io::{self, Read, Seek, SeekFrom, Write};
@@ -8,6 +9,7 @@ use self::repr::DatumRepr;
 pub use self::{
     map::{MapEntry, MapId},
     mdisks::Mdisks,
+    party::Party,
 };
 
 pub trait SaveDatum: Sized {

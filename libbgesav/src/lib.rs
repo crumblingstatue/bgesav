@@ -7,7 +7,7 @@ use std::{
 };
 
 use bgesav_derive::SavExt;
-use datum::{MapEntry, MapId, Mdisks, Party, SaveDatum};
+use datum::{MapEntry, MapId, Mdisks, PartyPresent, SaveDatum};
 
 pub trait SavExt: Sized {
     fn load_from_file(path: &Path) -> io::Result<Self>;
@@ -19,5 +19,5 @@ pub struct Sav {
     pub mdisks: Mdisks,
     pub current_map: MapId,
     pub map_entry: MapEntry,
-    pub party: Party,
+    pub party: PartyPresent,
 }

@@ -1,12 +1,12 @@
 use super::SaveDatum;
 
-pub struct Party {
+pub struct PartyPresent {
     pub peyj: bool,
     pub double_h: bool,
     pub alpha_soldier: bool,
 }
 
-impl SaveDatum for Party {
+impl SaveDatum for PartyPresent {
     const OFFSET: usize = 14543;
 
     type Repr = u8;

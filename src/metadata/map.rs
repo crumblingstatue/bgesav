@@ -1,35 +1,9 @@
 /*
-0 -
-1 -
-2 -
-3 -
-4 -
-5 -
-6 -
-7 -
-8 -
-9 -
-10 E3 Demo game begin
-11 -
-12 -
-13 -
-20 <game crash>
-21 <game crash>
-22 <game crash>
-25 <game crash>
-30 -
 31 Hangar [2<- peyj workshop, 3<- beluga landing ]
 32 Peyj's workshop
 33 Lightouse
 34 First boss map
 35 Destroyed lighthouse
-36 Invalid
-37 Invalid
-38 Invalid
-39 Invalid
-40 Invalid
-41 Invalid
-42 Invalid
 46 Factory Entrance
 50 Elevator room [1<- fence, 2<- electrical closet, 3<- tight spot, 4<- laboratory, 5<- elevator, 6 invalid, ]
 51 Electrical closet [2<- elevator room]
@@ -45,8 +19,6 @@
 61 Routing
 62 Control room
 63 Shipping room
-64 -
-70 -
 72 Mammago garage
  42 -> Mdisk player
 80 -
@@ -83,12 +55,6 @@
    2: from bar
    42: iris mdisk
 154 Revolution scene
-155 <crash (?)>
-156 <crash>
-160 <crash>
-200 -
-254 -
-255 -
 */
 
 pub const NAMES: [&str; 256] = [
@@ -123,7 +89,7 @@ pub const NAMES: [&str; 256] = [
     "Unknown",
     "Unknown",
     "Unknown",
-    "Unknown",
+    "Hangar",
     "Peyj's workshop",
     "Unknown",
     "Unknown",

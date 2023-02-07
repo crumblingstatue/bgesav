@@ -107,6 +107,10 @@ impl eframe::App for App {
                         self.save_path = path;
                     }
                 }
+                if !self.save_path.as_os_str().is_empty() && ui.button("⟲ Reload").clicked() {
+                    let sav = Sav::load_from_file(&self.save_path).unwrap();
+                    self.sav = Some(sav);
+                }
             });
             if let Some(sav) = &mut self.sav {
                 ui.separator();

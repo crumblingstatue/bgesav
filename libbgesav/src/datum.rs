@@ -33,7 +33,7 @@ where
     type Datum: SaveDatum;
     fn read<R: Read + Seek>(src: &mut R) -> io::Result<Self::Datum> {
         src.seek(SeekFrom::Start(Self::OFFSET as _))?;
-        let repr = <<Self as OffsetedSaveDatum>::Datum as SaveDatum>::Repr::read(src)?;
+        let repr = <Self::Datum as SaveDatum>::Repr::read(src)?;
         Ok(Self::Datum::from_repr(repr))
     }
 

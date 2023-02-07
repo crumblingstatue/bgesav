@@ -10,7 +10,6 @@ impl SaveDatum for Mdisks {
     type Repr = u16;
 
     fn from_repr(repr: Self::Repr) -> Self {
-        dbg!(repr);
         let mut arr = [false; 16];
         for (i, elem) in arr.iter_mut().enumerate() {
             if repr >> i & 1 != 0 {

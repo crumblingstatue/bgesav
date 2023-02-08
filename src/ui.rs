@@ -1,5 +1,5 @@
 use eframe::egui::{self, Ui};
-use libbgesav::{FollowState, Inventory, Sav};
+use libbgesav::{FollowState, Inventory, Password, Sav};
 
 use crate::{metadata, App, InvTab, Tab, UiState};
 
@@ -40,12 +40,27 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
             }
         }
     });
-    ui.horizontal(|ui| {
-        ui.selectable_value(&mut app.ui_state.tab, Tab::Inventory, "Inventory");
-        ui.selectable_value(&mut app.ui_state.tab, Tab::Map, "Map");
-        ui.selectable_value(&mut app.ui_state.tab, Tab::Party, "Party");
-        ui.selectable_value(&mut app.ui_state.tab, Tab::MDisk, "MDisk");
-    });
+    if let Some(sav) = &app.sav {
+        ui.horizontal(|ui| {
+            ui.selectable_value(&mut app.ui_state.tab, Tab::Inventory, "Inventory");
+            ui.selectable_value(&mut app.ui_state.tab, Tab::Map, "Map");
+            ui.selectable_value(&mut app.ui_state.tab, Tab::Party, "Party");
+            ui.selectable_value(&mut app.ui_state.tab, Tab::MDisk, "MDisk");
+            if ui
+                .selectable_value(&mut app.ui_state.tab, Tab::Passwords, "Passwords")
+                .clicked()
+            {
+                update_pw_bufs(&mut app.ui_state.password_bufs, sav);
+            }
+        });
+    }
+}
+
+fn update_pw_bufs(pw_bufs: &mut [String; 30], sav: &Sav) {
+    for (i, buf) in pw_bufs.iter_mut().enumerate() {
+        buf.clear();
+        pw_decode(&sav.passwords[i], buf);
+    }
 }
 
 pub(crate) fn map(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui) {
@@ -218,5 +233,53 @@ fn inv_ui(inventory: &mut Inventory, pearls: &mut i32, pearl_sync: bool, ui: &mu
     });
     if ui.button("🗑 Clear").clicked() {
         inventory.fill(0);
+    }
+}
+
+pub(crate) fn passwords(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui) {
+    egui::Grid::new("pw_grid").show(ui, |ui| {
+        for (i, pw) in sav.passwords.iter_mut().enumerate() {
+            ui.label(metadata::password::NAMES[i]);
+            if ui
+                .text_edit_singleline(&mut ui_state.password_bufs[i])
+                .lost_focus()
+                && ui.input().key_pressed(egui::Key::Enter)
+            {
+                *pw = pw_encode(&ui_state.password_bufs[i]);
+            }
+            if (i + 1) % 5 == 0 {
+                ui.end_row();
+            }
+        }
+    });
+}
+
+fn pw_decode(pw: &Password, buf: &mut String) {
+    for &digit in pw {
+        if digit == 0 {
+            break;
+        }
+        let ch = metadata::password::CHARSET[(digit - 1) as usize];
+        buf.push(ch as char);
+    }
+}
+
+fn pw_encode(text: &str) -> Password {
+    let bytes = text.as_bytes();
+    let mut pw = [0; 7];
+    for (&inp, out) in bytes.iter().zip(pw.iter_mut()) {
+        *out = pw_digit(inp);
+    }
+    pw
+}
+
+fn pw_digit(ascii: u8) -> i32 {
+    let ascii = ascii.to_ascii_lowercase();
+    if ascii.is_ascii_digit() {
+        (ascii - b'0') as i32 + 27
+    } else if ascii.is_ascii_lowercase() {
+        (ascii - b'a') as i32 + 1
+    } else {
+        0
     }
 }

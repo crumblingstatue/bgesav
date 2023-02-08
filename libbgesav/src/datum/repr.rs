@@ -60,3 +60,16 @@ impl<const N: usize> DatumRepr for [i32; N] {
         Ok(())
     }
 }
+
+impl<T: DatumRepr, const N: usize> DatumRepr for [T; N] {
+    default fn read<R: Read>(src: &mut R) -> io::Result<Self> {
+        std::array::try_from_fn(|_| T::read(src))
+    }
+
+    default fn write<W: Write>(self, dst: &mut W) -> io::Result<()> {
+        for item in self {
+            item.write(dst)?;
+        }
+        Ok(())
+    }
+}

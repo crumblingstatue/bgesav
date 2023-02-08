@@ -35,6 +35,7 @@ struct UiState {
     inv_tab: InvTab,
     map_filter: String,
     sync_pearls: bool,
+    password_bufs: [String; 30],
 }
 
 impl Default for UiState {
@@ -44,6 +45,7 @@ impl Default for UiState {
             inv_tab: InvTab::Jade,
             map_filter: Default::default(),
             sync_pearls: true,
+            password_bufs: std::array::from_fn(|_| String::new()),
         }
     }
 }
@@ -54,6 +56,7 @@ enum Tab {
     Map,
     Party,
     MDisk,
+    Passwords,
 }
 
 #[derive(PartialEq, Eq)]
@@ -93,6 +96,7 @@ impl eframe::App for App {
                     Tab::Party => ui::party(sav, ui),
                     Tab::MDisk => ui::mdisk(sav, ui),
                     Tab::Inventory => ui::inventory(sav, ui, &mut self.ui_state),
+                    Tab::Passwords => ui::passwords(sav, &mut self.ui_state, ui),
                 }
             }
         });

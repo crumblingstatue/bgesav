@@ -56,6 +56,19 @@
    2: from bar
    42: iris mdisk
 154 Revolution scene
+160: Crash
+161: Crash
+170: Transmitter entrance
+171: Crash
+180: Cloister
+   0 - Pey'j location
+   1 -> Alpha soldiers
+   2 -> Near great crypt
+   42 -> mdisk reader
+181: The great crypt
+
+220: Looters cavern 1
+221: Looters cavern 2
 */
 
 pub const NAMES: [&str; 256] = [

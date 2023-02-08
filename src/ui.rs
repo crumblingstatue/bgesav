@@ -1,5 +1,5 @@
 use eframe::egui::{self, Ui};
-use libbgesav::{FollowState, Sav, SavExt};
+use libbgesav::{FollowState, Sav};
 
 use crate::{metadata, App, Tab, UiState};
 
@@ -51,7 +51,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
 pub(crate) fn map(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui) {
     ui.horizontal(|ui| {
         egui::ComboBox::from_label("Current map")
-            .selected_text(map_text(sav.current_map.0))
+            .selected_text(map_text(sav.current_map))
             .width(200.0)
             .show_ui(ui, |ui| {
                 for i in 0..=255 {
@@ -59,7 +59,7 @@ pub(crate) fn map(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui) {
                         .to_ascii_lowercase()
                         .contains(&ui_state.map_filter.to_ascii_lowercase())
                     {
-                        ui.selectable_value(&mut sav.current_map.0, i, map_text(i));
+                        ui.selectable_value(&mut sav.current_map, i, map_text(i));
                     }
                 }
             });
@@ -70,7 +70,7 @@ pub(crate) fn map(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui) {
     });
     ui.separator();
     ui.label("Entry");
-    ui.add(egui::DragValue::new(&mut sav.map_entry.0));
+    ui.add(egui::DragValue::new(&mut sav.map_entry));
 }
 
 fn map_text(idx: u8) -> String {
@@ -87,36 +87,36 @@ pub(crate) fn party(sav: &mut Sav, ui: &mut Ui) {
     ui.heading("Jade");
     ui.horizontal(|ui| {
         ui.label("Max health");
-        ui.add(egui::DragValue::new(&mut sav.jade_max_health.0));
+        ui.add(egui::DragValue::new(&mut sav.jade_max_health));
         ui.label("Current health");
-        ui.add(egui::DragValue::new(&mut sav.jade_curr_health.0));
+        ui.add(egui::DragValue::new(&mut sav.jade_curr_health));
     });
     ui.heading("Pey'j");
     ui.horizontal(|ui| {
         ui.checkbox(&mut sav.party.peyj, "present");
-        follow_state_ui(0, &mut sav.peyj_follow_state.0, ui);
+        follow_state_ui(0, &mut sav.peyj_follow_state, ui);
         ui.separator();
         ui.label("Health");
-        ui.add(egui::DragValue::new(&mut sav.peyj_curr_health.0));
+        ui.add(egui::DragValue::new(&mut sav.peyj_curr_health));
         ui.label("/");
-        ui.add(egui::DragValue::new(&mut sav.peyj_max_health.0));
+        ui.add(egui::DragValue::new(&mut sav.peyj_max_health));
     });
     ui.heading("Double H");
     ui.horizontal(|ui| {
         ui.checkbox(&mut sav.party.double_h, "present");
-        follow_state_ui(1, &mut sav.double_h_follow_state.0, ui);
+        follow_state_ui(1, &mut sav.double_h_follow_state, ui);
         ui.separator();
         ui.label("Health");
-        ui.add(egui::DragValue::new(&mut sav.double_h_curr_health.0));
+        ui.add(egui::DragValue::new(&mut sav.double_h_curr_health));
         ui.label("/");
-        ui.add(egui::DragValue::new(&mut sav.double_h_max_health.0));
+        ui.add(egui::DragValue::new(&mut sav.double_h_max_health));
     });
     ui.heading("Hovercraft");
     ui.horizontal(|ui| {
         ui.label("Health");
-        ui.add(egui::DragValue::new(&mut sav.hovercraft_curr_health.0));
+        ui.add(egui::DragValue::new(&mut sav.hovercraft_curr_health));
         ui.label("/");
-        ui.add(egui::DragValue::new(&mut sav.hovercraft_max_health.0));
+        ui.add(egui::DragValue::new(&mut sav.hovercraft_max_health));
     });
     ui.heading("Alpha Soldier");
     ui.checkbox(&mut sav.party.alpha_soldier, "present");
@@ -168,6 +168,6 @@ pub(crate) fn follow_state_ui(id: u8, follow_state: &mut FollowState, ui: &mut U
 pub(crate) fn inventory(sav: &mut Sav, ui: &mut Ui) {
     ui.horizontal(|ui| {
         ui.label("Units");
-        ui.add(egui::DragValue::new(&mut sav.units.0));
+        ui.add(egui::DragValue::new(&mut sav.units));
     });
 }

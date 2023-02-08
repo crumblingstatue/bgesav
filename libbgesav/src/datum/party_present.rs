@@ -1,4 +1,4 @@
-use super::{OffsetedSaveDatum, SaveDatum};
+use super::SaveDatum;
 
 pub struct PartyPresent {
     pub peyj: bool,
@@ -30,9 +30,4 @@ impl SaveDatum for PartyPresent {
         }
         repr
     }
-}
-
-impl OffsetedSaveDatum for PartyPresent {
-    const OFFSET: usize = 14543;
-    type Datum = Self;
 }

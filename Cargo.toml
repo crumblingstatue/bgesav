@@ -11,4 +11,4 @@ libbgesav = { path = "libbgesav" }
 rfd = "0.11.0"
 
 [workspace]
-members = ["libbgesav", "bgesav-derive"]
+members = ["libbgesav"]

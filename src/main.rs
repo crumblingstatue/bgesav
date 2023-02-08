@@ -4,7 +4,7 @@ mod ui;
 use std::{ffi::OsString, path::PathBuf};
 
 use eframe::egui;
-use libbgesav::{Sav, SavExt};
+use libbgesav::Sav;
 
 struct LoadPayload {
     path: OsString,

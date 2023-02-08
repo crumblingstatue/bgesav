@@ -1,6 +1,4 @@
-use std::borrow::Borrow;
-
-use super::{OffsetedSaveDatum, SaveDatum};
+use super::SaveDatum;
 
 #[derive(PartialEq, Eq, Clone, Copy)]
 pub enum FollowState {
@@ -38,44 +36,4 @@ impl SaveDatum for FollowState {
             FollowState::Unknown4 => 4,
         }
     }
-}
-
-pub struct PeyjFollowState(pub FollowState);
-
-impl From<FollowState> for PeyjFollowState {
-    fn from(value: FollowState) -> Self {
-        Self(value)
-    }
-}
-
-impl Borrow<FollowState> for PeyjFollowState {
-    fn borrow(&self) -> &FollowState {
-        &self.0
-    }
-}
-
-impl OffsetedSaveDatum for PeyjFollowState {
-    const OFFSET: usize = 14300;
-
-    type Datum = FollowState;
-}
-
-pub struct DoubleHFollowState(pub FollowState);
-
-impl From<FollowState> for DoubleHFollowState {
-    fn from(value: FollowState) -> Self {
-        Self(value)
-    }
-}
-
-impl Borrow<FollowState> for DoubleHFollowState {
-    fn borrow(&self) -> &FollowState {
-        &self.0
-    }
-}
-
-impl OffsetedSaveDatum for DoubleHFollowState {
-    const OFFSET: usize = 14304;
-
-    type Datum = FollowState;
 }

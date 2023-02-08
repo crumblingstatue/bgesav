@@ -31,6 +31,7 @@
 92 Selene (moon)
  1 -> Near top
  2 -> Moon surface
+ 7 -> moon river
  42 -> mdisk player
 93 <crash>
 94 <crash>
@@ -150,7 +151,7 @@ pub const NAMES: [&str; 256] = [
     "Unknown",
     "Unknown",
     "Unknown",
-    "Unknown",
+    "Selene (moon)",
     "Unknown",
     "Unknown",
     "Unknown",
@@ -212,7 +213,7 @@ pub const NAMES: [&str; 256] = [
     "Unknown",
     "Unknown",
     "Ming Tzu's shop",
-    "Unknown",
+    "Revolution cutscene",
     "Unknown",
     "Unknown",
     "Unknown",

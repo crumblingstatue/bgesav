@@ -1,7 +1,7 @@
 use eframe::egui::{self, Ui};
-use libbgesav::{FollowState, Sav};
+use libbgesav::{FollowState, Inventory, Sav};
 
-use crate::{metadata, App, Tab, UiState};
+use crate::{metadata, App, InvTab, Tab, UiState};
 
 pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
     ui.horizontal(|ui| {
@@ -165,9 +165,40 @@ pub(crate) fn follow_state_ui(id: u8, follow_state: &mut FollowState, ui: &mut U
         });
 }
 
-pub(crate) fn inventory(sav: &mut Sav, ui: &mut Ui) {
+pub(crate) fn inventory(sav: &mut Sav, ui: &mut Ui, ui_state: &mut UiState) {
     ui.horizontal(|ui| {
         ui.label("Units");
         ui.add(egui::DragValue::new(&mut sav.units));
     });
+    ui.separator();
+    ui.heading("Party inventories");
+    ui.horizontal(|ui| {
+        ui.selectable_value(&mut ui_state.inv_tab, InvTab::Jade, "Jade");
+        ui.selectable_value(&mut ui_state.inv_tab, InvTab::Peyj, "Pey'j");
+        ui.selectable_value(&mut ui_state.inv_tab, InvTab::DoubleH, "Double H");
+        ui.selectable_value(&mut ui_state.inv_tab, InvTab::Hovercraft, "Hovercraft");
+    });
+    ui.separator();
+    let inv_ref = match ui_state.inv_tab {
+        InvTab::Jade => &mut sav.jade_inventory,
+        InvTab::Peyj => &mut sav.peyj_inventory,
+        InvTab::DoubleH => &mut sav.double_h_inventory,
+        InvTab::Hovercraft => &mut sav.hovercraft_inventory,
+    };
+    inv_ui(inv_ref, ui);
+}
+
+fn inv_ui(inventory: &mut Inventory, ui: &mut Ui) {
+    egui::Grid::new("inv_grid").show(ui, |ui| {
+        for (i, item) in inventory.iter_mut().enumerate() {
+            ui.label(metadata::inventory::NAMES[i]);
+            ui.add(egui::DragValue::new(item));
+            if (i + 1) % 3 == 0 {
+                ui.end_row();
+            }
+        }
+    });
+    if ui.button("🗑 Clear").clicked() {
+        inventory.fill(0);
+    }
 }

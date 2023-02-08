@@ -32,6 +32,7 @@ struct App {
 
 struct UiState {
     tab: Tab,
+    inv_tab: InvTab,
     map_filter: String,
 }
 
@@ -39,6 +40,7 @@ impl Default for UiState {
     fn default() -> Self {
         Self {
             tab: Tab::Inventory,
+            inv_tab: InvTab::Jade,
             map_filter: Default::default(),
         }
     }
@@ -50,6 +52,14 @@ enum Tab {
     Map,
     Party,
     MDisk,
+}
+
+#[derive(PartialEq, Eq)]
+enum InvTab {
+    Jade,
+    Peyj,
+    DoubleH,
+    Hovercraft,
 }
 
 impl App {
@@ -80,7 +90,7 @@ impl eframe::App for App {
                     Tab::Map => ui::map(sav, &mut self.ui_state, ui),
                     Tab::Party => ui::party(sav, ui),
                     Tab::MDisk => ui::mdisk(sav, ui),
-                    Tab::Inventory => ui::inventory(sav, ui),
+                    Tab::Inventory => ui::inventory(sav, ui, &mut self.ui_state),
                 }
             }
         });

@@ -6,8 +6,7 @@ use std::{
     path::Path,
 };
 
-pub use datum::FollowState;
-use datum::{DatumRepr, Mdisks, PartyPresent, SaveDatum};
+pub use datum::{DatumRepr, FollowState, Mdisks, PartyPresent, SaveDatum};
 
 fn read_datum<T: SaveDatum, R: Read>(reader: &mut R) -> io::Result<T> {
     <T::Repr as DatumRepr>::read(reader).map(|val| T::from_repr(val))
@@ -49,6 +48,8 @@ macro_rules! sav_def {
     };
 }
 
+pub type Inventory = [i32; 50];
+
 sav_def! {
     // name                   offset type
        mdisks                 600    Mdisks
@@ -58,6 +59,10 @@ sav_def! {
        double_h_max_health    856    f32
        jade_max_health        884    f32
        hovercraft_max_health  892    f32
+       peyj_inventory         1000   Inventory
+       double_h_inventory     1200   Inventory
+       jade_inventory         2600   Inventory
+       hovercraft_inventory   3000   Inventory
        map_entry              11084  u8
        peyj_curr_health       13324  f32
        double_h_curr_health   13328  f32
@@ -67,5 +72,4 @@ sav_def! {
        double_h_follow_state  14304  FollowState
        units                  14348  i32
        party                  14543  PartyPresent
-
 }

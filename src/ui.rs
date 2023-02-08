@@ -173,6 +173,10 @@ pub(crate) fn inventory(sav: &mut Sav, ui: &mut Ui, ui_state: &mut UiState) {
         ui.add(egui::DragValue::new(&mut sav.units));
         ui.label("Pearls");
         let re = ui.add(egui::DragValue::new(&mut sav.pearls));
+        ui.checkbox(&mut ui_state.sync_pearls, "Pearl sync")
+            .on_hover_text(
+                "Synchronizes global pearl count with the number of pearls in Jade's inventory.",
+            );
         if ui_state.sync_pearls && re.changed() {
             sav.jade_inventory[PEARL_INV_IDX] = sav.pearls;
         }
@@ -186,25 +190,25 @@ pub(crate) fn inventory(sav: &mut Sav, ui: &mut Ui, ui_state: &mut UiState) {
         ui.selectable_value(&mut ui_state.inv_tab, InvTab::Hovercraft, "Hovercraft");
     });
     ui.separator();
+    let mut sync_pearls = false;
     let inv_ref = match ui_state.inv_tab {
-        InvTab::Jade => &mut sav.jade_inventory,
+        InvTab::Jade => {
+            sync_pearls = ui_state.sync_pearls;
+            &mut sav.jade_inventory
+        }
         InvTab::Peyj => &mut sav.peyj_inventory,
         InvTab::DoubleH => &mut sav.double_h_inventory,
         InvTab::Hovercraft => &mut sav.hovercraft_inventory,
     };
-    inv_ui(inv_ref, &mut sav.pearls, ui_state, ui);
-    ui.checkbox(&mut ui_state.sync_pearls, "Pearl sync")
-        .on_hover_text(
-            "Synchronizes the pearl currency value with the pearl item amount in Jade's inventory.",
-        );
+    inv_ui(inv_ref, &mut sav.pearls, sync_pearls, ui);
 }
 
-fn inv_ui(inventory: &mut Inventory, pearls: &mut i32, ui_state: &mut UiState, ui: &mut Ui) {
+fn inv_ui(inventory: &mut Inventory, pearls: &mut i32, pearl_sync: bool, ui: &mut Ui) {
     egui::Grid::new("inv_grid").show(ui, |ui| {
         for (i, qty) in inventory.iter_mut().enumerate() {
             ui.label(metadata::inventory::NAMES[i]);
             let re = ui.add(egui::DragValue::new(qty));
-            if i == PEARL_INV_IDX && re.changed() && ui_state.sync_pearls {
+            if pearl_sync && i == PEARL_INV_IDX && re.changed() {
                 *pearls = *qty;
             }
             if (i + 1) % 3 == 0 {

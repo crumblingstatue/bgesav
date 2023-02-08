@@ -45,7 +45,7 @@ pub const NAMES: [&str; 50] = [
     "Compass",
     "Stellar Motor",
     "Unknown (empty sprite)",
-    "Pearls (inventory item)",
+    "Pearls",
     "Alpha Sections Ticket",
     "Unknown",
     "Unknown",

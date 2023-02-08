@@ -5,9 +5,13 @@ use super::{OffsetedSaveDatum, SaveDatum};
 #[derive(PartialEq, Eq, Clone, Copy)]
 pub enum FollowState {
     Follow,
+    /// Pey'j is present in workshop (fixing mdisk reader), can't talk to him.
     Unknown1,
+    /// Pey'j is missing from workshop
     Unknown2,
+    /// Pey'j is present in workshop (fixing mdisk reader), can't talk to him.
     Unknown3,
+    /// Pey'j is fixing mdisk reader in workshop, can talk to him
     Unknown4,
 }
 

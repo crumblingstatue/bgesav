@@ -130,7 +130,7 @@ pub const NAMES: [&str; 256] = [
     "Unknown",
     "Unknown",
     "Unknown",
-    "Unknown",
+    "Mammago garage",
     "Unknown",
     "Unknown",
     "Unknown",

@@ -10,8 +10,9 @@ use std::{
 use bgesav_derive::SavExt;
 pub use datum::FollowState;
 use datum::{
-    DoubleHFollowState, MapEntry, MapId, Mdisks, OffsetedSaveDatum, PartyPresent, PeyjFollowState,
-    Units,
+    DoubleHCurrHealth, DoubleHFollowState, DoubleHMaxHealth, HovercraftCurrHealth,
+    HovercraftMaxHealth, JadeCurrHealth, JadeMaxHealth, MapEntry, MapId, Mdisks, OffsetedSaveDatum,
+    PartyPresent, PeyjCurrHealth, PeyjFollowState, PeyjMaxHealth, Units,
 };
 
 pub trait SavExt: Sized {
@@ -28,4 +29,12 @@ pub struct Sav {
     pub peyj_follow_state: PeyjFollowState,
     pub double_h_follow_state: DoubleHFollowState,
     pub units: Units,
+    pub peyj_max_health: PeyjMaxHealth,
+    pub double_h_max_health: DoubleHMaxHealth,
+    pub jade_max_health: JadeMaxHealth,
+    pub hovercraft_max_health: HovercraftMaxHealth,
+    pub peyj_curr_health: PeyjCurrHealth,
+    pub double_h_curr_health: DoubleHCurrHealth,
+    pub jade_curr_health: JadeCurrHealth,
+    pub hovercraft_curr_health: HovercraftCurrHealth,
 }

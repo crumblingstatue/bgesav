@@ -84,12 +84,40 @@ pub(crate) fn mdisk(sav: &mut Sav, ui: &mut Ui) {
 }
 
 pub(crate) fn party(sav: &mut Sav, ui: &mut Ui) {
+    ui.heading("Jade");
+    ui.horizontal(|ui| {
+        ui.label("Max health");
+        ui.add(egui::DragValue::new(&mut sav.jade_max_health.0));
+        ui.label("Current health");
+        ui.add(egui::DragValue::new(&mut sav.jade_curr_health.0));
+    });
     ui.heading("Pey'j");
-    ui.checkbox(&mut sav.party.peyj, "present");
-    follow_state_ui(0, &mut sav.peyj_follow_state.0, ui);
+    ui.horizontal(|ui| {
+        ui.checkbox(&mut sav.party.peyj, "present");
+        follow_state_ui(0, &mut sav.peyj_follow_state.0, ui);
+        ui.separator();
+        ui.label("Health");
+        ui.add(egui::DragValue::new(&mut sav.peyj_curr_health.0));
+        ui.label("/");
+        ui.add(egui::DragValue::new(&mut sav.peyj_max_health.0));
+    });
     ui.heading("Double H");
-    ui.checkbox(&mut sav.party.double_h, "present");
-    follow_state_ui(1, &mut sav.double_h_follow_state.0, ui);
+    ui.horizontal(|ui| {
+        ui.checkbox(&mut sav.party.double_h, "present");
+        follow_state_ui(1, &mut sav.double_h_follow_state.0, ui);
+        ui.separator();
+        ui.label("Health");
+        ui.add(egui::DragValue::new(&mut sav.double_h_curr_health.0));
+        ui.label("/");
+        ui.add(egui::DragValue::new(&mut sav.double_h_max_health.0));
+    });
+    ui.heading("Hovercraft");
+    ui.horizontal(|ui| {
+        ui.label("Health");
+        ui.add(egui::DragValue::new(&mut sav.hovercraft_curr_health.0));
+        ui.label("/");
+        ui.add(egui::DragValue::new(&mut sav.hovercraft_max_health.0));
+    });
     ui.heading("Alpha Soldier");
     ui.checkbox(&mut sav.party.alpha_soldier, "present");
     //follow_state_ui(&mut sav.peyj_follow_state.0, ui);

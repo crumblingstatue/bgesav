@@ -35,3 +35,13 @@ impl DatumRepr for i32 {
         dst.write_i32::<LE>(self)
     }
 }
+
+impl DatumRepr for f32 {
+    fn read<R: Read>(src: &mut R) -> io::Result<Self> {
+        src.read_f32::<LE>()
+    }
+
+    fn write<W: Write>(self, dst: &mut W) -> io::Result<()> {
+        dst.write_f32::<LE>(self)
+    }
+}

@@ -40,17 +40,3 @@ impl SaveDatum for bool {
         }
     }
 }
-
-pub struct Units(pub i32);
-
-impl SaveDatum for Units {
-    type Repr = i32;
-
-    fn from_repr(repr: Self::Repr) -> Self {
-        Self(repr)
-    }
-
-    fn to_repr(&self) -> Self::Repr {
-        self.0
-    }
-}

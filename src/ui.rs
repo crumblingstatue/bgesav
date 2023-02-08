@@ -35,7 +35,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
             app.sav = Some(sav);
         }
         if let Some(sav) = &app.sav {
-            if ui.button("Save").on_hover_text("Ctrl+S").clicked() || ctrl_s {
+            if ui.button("💾 Save").on_hover_text("Ctrl+S").clicked() || ctrl_s {
                 sav.save_to_file(&app.save_path).unwrap();
             }
         }

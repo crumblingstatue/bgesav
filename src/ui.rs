@@ -20,12 +20,22 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
                 app.save_path = path;
             }
         }
-        if !app.save_path.as_os_str().is_empty() && ui.button("⟲ Reload").clicked() {
+        let (ctrl_r, ctrl_s) = {
+            let inp = ui.input();
+            let ctrl = inp.modifiers.ctrl;
+            (
+                ctrl && inp.key_pressed(egui::Key::R),
+                ctrl && inp.key_pressed(egui::Key::S),
+            )
+        };
+        if !app.save_path.as_os_str().is_empty()
+            && (ui.button("⟲ Reload").on_hover_text("Ctrl+R").clicked() || ctrl_r)
+        {
             let sav = Sav::load_from_file(&app.save_path).unwrap();
             app.sav = Some(sav);
         }
         if let Some(sav) = &app.sav {
-            if ui.button("Save").clicked() {
+            if ui.button("Save").on_hover_text("Ctrl+S").clicked() || ctrl_s {
                 sav.save_to_file(&app.save_path).unwrap();
             }
         }

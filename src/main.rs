@@ -27,7 +27,21 @@ fn main() {
 struct App {
     save_path: PathBuf,
     sav: Option<Sav>,
+    ui_state: UiState,
+}
+
+struct UiState {
     tab: Tab,
+    map_filter: String,
+}
+
+impl Default for UiState {
+    fn default() -> Self {
+        Self {
+            tab: Tab::Map,
+            map_filter: Default::default(),
+        }
+    }
 }
 
 #[derive(PartialEq, Eq)]
@@ -43,12 +57,12 @@ impl App {
             Some(payload) => Self {
                 save_path: payload.path.into(),
                 sav: Some(payload.sav),
-                tab: Tab::Map,
+                ui_state: UiState::default(),
             },
             None => Self {
                 save_path: Default::default(),
                 sav: Default::default(),
-                tab: Tab::Map,
+                ui_state: UiState::default(),
             },
         }
     }
@@ -61,8 +75,8 @@ impl eframe::App for App {
         });
         egui::CentralPanel::default().show(ctx, |ui| {
             if let Some(sav) = &mut self.sav {
-                match self.tab {
-                    Tab::Map => ui::map(sav, ui),
+                match self.ui_state.tab {
+                    Tab::Map => ui::map(sav, &mut self.ui_state, ui),
                     Tab::Party => ui::party(sav, ui),
                     Tab::MDisk => ui::mdisk(sav, ui),
                 }

@@ -1,7 +1,7 @@
 use eframe::egui::{self, Ui};
 use libbgesav::{FollowState, Sav, SavExt};
 
-use crate::{metadata, App, Tab};
+use crate::{metadata, App, Tab, UiState};
 
 pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
     ui.horizontal(|ui| {
@@ -31,21 +31,32 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
         }
     });
     ui.horizontal(|ui| {
-        ui.selectable_value(&mut app.tab, Tab::Map, "Map");
-        ui.selectable_value(&mut app.tab, Tab::Party, "Party");
-        ui.selectable_value(&mut app.tab, Tab::MDisk, "MDisk");
+        ui.selectable_value(&mut app.ui_state.tab, Tab::Map, "Map");
+        ui.selectable_value(&mut app.ui_state.tab, Tab::Party, "Party");
+        ui.selectable_value(&mut app.ui_state.tab, Tab::MDisk, "MDisk");
     });
 }
 
-pub(crate) fn map(sav: &mut Sav, ui: &mut Ui) {
-    egui::ComboBox::from_label("Current map")
-        .selected_text(map_text(sav.current_map.0))
-        .width(200.0)
-        .show_ui(ui, |ui| {
-            for i in 0..=255 {
-                ui.selectable_value(&mut sav.current_map.0, i, map_text(i));
-            }
-        });
+pub(crate) fn map(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui) {
+    ui.horizontal(|ui| {
+        egui::ComboBox::from_label("Current map")
+            .selected_text(map_text(sav.current_map.0))
+            .width(200.0)
+            .show_ui(ui, |ui| {
+                for i in 0..=255 {
+                    if metadata::map::NAMES[i as usize]
+                        .to_ascii_lowercase()
+                        .contains(&ui_state.map_filter.to_ascii_lowercase())
+                    {
+                        ui.selectable_value(&mut sav.current_map.0, i, map_text(i));
+                    }
+                }
+            });
+        ui.add(egui::TextEdit::singleline(&mut ui_state.map_filter).hint_text("Filter"));
+        if !ui_state.map_filter.is_empty() && ui.button("🗙").on_hover_text("Clear").clicked() {
+            ui_state.map_filter.clear();
+        }
+    });
     ui.separator();
     ui.label("Entry");
     ui.add(egui::DragValue::new(&mut sav.map_entry.0));

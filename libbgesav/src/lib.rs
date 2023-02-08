@@ -11,6 +11,7 @@ use bgesav_derive::SavExt;
 pub use datum::FollowState;
 use datum::{
     DoubleHFollowState, MapEntry, MapId, Mdisks, OffsetedSaveDatum, PartyPresent, PeyjFollowState,
+    Units,
 };
 
 pub trait SavExt: Sized {
@@ -26,4 +27,5 @@ pub struct Sav {
     pub party: PartyPresent,
     pub peyj_follow_state: PeyjFollowState,
     pub double_h_follow_state: DoubleHFollowState,
+    pub units: Units,
 }

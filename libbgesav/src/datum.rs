@@ -43,3 +43,23 @@ where
         repr.write(dst)
     }
 }
+
+pub struct Units(pub i32);
+
+impl SaveDatum for Units {
+    type Repr = i32;
+
+    fn from_repr(repr: Self::Repr) -> Self {
+        Self(repr)
+    }
+
+    fn to_repr(&self) -> Self::Repr {
+        self.0
+    }
+}
+
+impl OffsetedSaveDatum for Units {
+    const OFFSET: usize = 14348;
+
+    type Datum = Self;
+}

@@ -31,6 +31,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
         }
     });
     ui.horizontal(|ui| {
+        ui.selectable_value(&mut app.ui_state.tab, Tab::Inventory, "Inventory");
         ui.selectable_value(&mut app.ui_state.tab, Tab::Map, "Map");
         ui.selectable_value(&mut app.ui_state.tab, Tab::Party, "Party");
         ui.selectable_value(&mut app.ui_state.tab, Tab::MDisk, "MDisk");
@@ -124,4 +125,11 @@ pub(crate) fn follow_state_ui(id: u8, follow_state: &mut FollowState, ui: &mut U
                 label(FollowState::Unknown4),
             );
         });
+}
+
+pub(crate) fn inventory(sav: &mut Sav, ui: &mut Ui) {
+    ui.horizontal(|ui| {
+        ui.label("Units");
+        ui.add(egui::DragValue::new(&mut sav.units.0));
+    });
 }

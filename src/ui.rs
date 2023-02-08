@@ -169,6 +169,8 @@ pub(crate) fn inventory(sav: &mut Sav, ui: &mut Ui, ui_state: &mut UiState) {
     ui.horizontal(|ui| {
         ui.label("Units");
         ui.add(egui::DragValue::new(&mut sav.units));
+        ui.label("Pearls");
+        ui.add(egui::DragValue::new(&mut sav.pearls));
     });
     ui.separator();
     ui.heading("Party inventories");

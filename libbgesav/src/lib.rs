@@ -65,6 +65,7 @@ sav_def! {
        hovercraft_inventory   3000   Inventory
        map_entry              11084  u8
        peyj_curr_health       13324  f32
+       pearls                 13264  i32
        double_h_curr_health   13328  f32
        jade_curr_health       13356  f32
        hovercraft_curr_health 13364  f32

@@ -1,17 +1,26 @@
 mod metadata;
 mod ui;
 
-use std::path::PathBuf;
+use std::{ffi::OsString, path::PathBuf};
 
 use eframe::egui;
-use libbgesav::Sav;
+use libbgesav::{Sav, SavExt};
+
+struct LoadPayload {
+    path: OsString,
+    sav: Sav,
+}
 
 fn main() {
     let native_options = eframe::NativeOptions::default();
+    let payload = std::env::args_os().nth(1).map(|path| LoadPayload {
+        sav: Sav::load_from_file(path.as_ref()).unwrap(),
+        path,
+    });
     eframe::run_native(
         "BG&E Save editor",
         native_options,
-        Box::new(|cc| Box::new(App::new(cc))),
+        Box::new(|cc| Box::new(App::new(cc, payload))),
     );
 }
 
@@ -19,16 +28,6 @@ struct App {
     save_path: PathBuf,
     sav: Option<Sav>,
     tab: Tab,
-}
-
-impl Default for App {
-    fn default() -> Self {
-        Self {
-            save_path: Default::default(),
-            sav: Default::default(),
-            tab: Tab::Map,
-        }
-    }
 }
 
 #[derive(PartialEq, Eq)]
@@ -39,8 +38,19 @@ enum Tab {
 }
 
 impl App {
-    fn new(_cc: &eframe::CreationContext<'_>) -> Self {
-        Self::default()
+    fn new(_cc: &eframe::CreationContext<'_>, payload: Option<LoadPayload>) -> Self {
+        match payload {
+            Some(payload) => Self {
+                save_path: payload.path.into(),
+                sav: Some(payload.sav),
+                tab: Tab::Map,
+            },
+            None => Self {
+                save_path: Default::default(),
+                sav: Default::default(),
+                tab: Tab::Map,
+            },
+        }
     }
 }
 

@@ -165,12 +165,17 @@ pub(crate) fn follow_state_ui(id: u8, follow_state: &mut FollowState, ui: &mut U
         });
 }
 
+const PEARL_INV_IDX: usize = 46;
+
 pub(crate) fn inventory(sav: &mut Sav, ui: &mut Ui, ui_state: &mut UiState) {
     ui.horizontal(|ui| {
         ui.label("Units");
         ui.add(egui::DragValue::new(&mut sav.units));
         ui.label("Pearls");
-        ui.add(egui::DragValue::new(&mut sav.pearls));
+        let re = ui.add(egui::DragValue::new(&mut sav.pearls));
+        if ui_state.sync_pearls && re.changed() {
+            sav.jade_inventory[PEARL_INV_IDX] = sav.pearls;
+        }
     });
     ui.separator();
     ui.heading("Party inventories");
@@ -187,14 +192,21 @@ pub(crate) fn inventory(sav: &mut Sav, ui: &mut Ui, ui_state: &mut UiState) {
         InvTab::DoubleH => &mut sav.double_h_inventory,
         InvTab::Hovercraft => &mut sav.hovercraft_inventory,
     };
-    inv_ui(inv_ref, ui);
+    inv_ui(inv_ref, &mut sav.pearls, ui_state, ui);
+    ui.checkbox(&mut ui_state.sync_pearls, "Pearl sync")
+        .on_hover_text(
+            "Synchronizes the pearl currency value with the pearl item amount in Jade's inventory.",
+        );
 }
 
-fn inv_ui(inventory: &mut Inventory, ui: &mut Ui) {
+fn inv_ui(inventory: &mut Inventory, pearls: &mut i32, ui_state: &mut UiState, ui: &mut Ui) {
     egui::Grid::new("inv_grid").show(ui, |ui| {
-        for (i, item) in inventory.iter_mut().enumerate() {
+        for (i, qty) in inventory.iter_mut().enumerate() {
             ui.label(metadata::inventory::NAMES[i]);
-            ui.add(egui::DragValue::new(item));
+            let re = ui.add(egui::DragValue::new(qty));
+            if i == PEARL_INV_IDX && re.changed() && ui_state.sync_pearls {
+                *pearls = *qty;
+            }
             if (i + 1) % 3 == 0 {
                 ui.end_row();
             }

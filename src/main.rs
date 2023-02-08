@@ -34,6 +34,7 @@ struct UiState {
     tab: Tab,
     inv_tab: InvTab,
     map_filter: String,
+    sync_pearls: bool,
 }
 
 impl Default for UiState {
@@ -42,6 +43,7 @@ impl Default for UiState {
             tab: Tab::Inventory,
             inv_tab: InvTab::Jade,
             map_filter: Default::default(),
+            sync_pearls: true,
         }
     }
 }

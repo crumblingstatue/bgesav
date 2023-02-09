@@ -1,4 +1,4 @@
-#![feature(specialization, array_try_from_fn)]
+#![feature(min_specialization, array_try_from_fn)]
 
 mod datum;
 

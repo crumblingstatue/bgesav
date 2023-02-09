@@ -20,14 +20,13 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
                 app.save_path = path;
             }
         }
-        let (ctrl_r, ctrl_s) = {
-            let inp = ui.input();
+        let (ctrl_r, ctrl_s) = ui.input(|inp| {
             let ctrl = inp.modifiers.ctrl;
             (
                 ctrl && inp.key_pressed(egui::Key::R),
                 ctrl && inp.key_pressed(egui::Key::S),
             )
-        };
+        });
         if !app.save_path.as_os_str().is_empty()
             && (ui.button("⟲ Reload").on_hover_text("Ctrl+R").clicked() || ctrl_r)
         {
@@ -243,7 +242,7 @@ pub(crate) fn passwords(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui) {
             if ui
                 .text_edit_singleline(&mut ui_state.password_bufs[i])
                 .lost_focus()
-                && ui.input().key_pressed(egui::Key::Enter)
+                && ui.input(|inp| inp.key_pressed(egui::Key::Enter))
             {
                 *pw = pw_encode(&ui_state.password_bufs[i]);
             }

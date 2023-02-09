@@ -21,7 +21,8 @@ fn main() {
         "BG&E Save editor",
         native_options,
         Box::new(|cc| Box::new(App::new(cc, payload))),
-    );
+    )
+    .unwrap();
 }
 
 struct App {

@@ -6,7 +6,6 @@ use {
 
 pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
     ui.horizontal(|ui| {
-        ui.label("File");
         let displayed = app.save_path.display().to_string();
         let s = if displayed.is_empty() {
             "<No file>".to_string()

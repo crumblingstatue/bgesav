@@ -2,13 +2,12 @@
 
 mod datum;
 
+pub use datum::{DatumRepr, FollowState, Mdisks, PartyPresent, SaveDatum};
 use std::{
     fs::{File, OpenOptions},
     io::{self, Read, Seek, Write},
     path::Path,
 };
-
-pub use datum::{DatumRepr, FollowState, Mdisks, PartyPresent, SaveDatum};
 
 fn read_datum<T: SaveDatum, R: Read>(reader: &mut R) -> io::Result<T> {
     <T::Repr as DatumRepr>::read(reader).map(|val| T::from_repr(val))

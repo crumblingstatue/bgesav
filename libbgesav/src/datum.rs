@@ -3,8 +3,9 @@ mod party_follow_state;
 mod party_present;
 mod repr;
 
-pub use self::repr::DatumRepr;
-pub use self::{mdisks::Mdisks, party_follow_state::FollowState, party_present::PartyPresent};
+pub use self::{
+    mdisks::Mdisks, party_follow_state::FollowState, party_present::PartyPresent, repr::DatumRepr,
+};
 
 pub trait SaveDatum: Sized {
     type Repr: DatumRepr;

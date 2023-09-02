@@ -1,7 +1,8 @@
-use eframe::egui::{self, Ui};
-use libbgesav::{FollowState, Inventory, Password, Sav};
-
-use crate::{metadata, App, InvTab, Tab, UiState};
+use {
+    crate::{metadata, App, InvTab, Tab, UiState},
+    eframe::egui::{self, Ui},
+    libbgesav::{FollowState, Inventory, Password, Sav},
+};
 
 pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
     ui.horizontal(|ui| {

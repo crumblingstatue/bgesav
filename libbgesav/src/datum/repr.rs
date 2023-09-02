@@ -1,6 +1,7 @@
-use std::io::{self, Read, Write};
-
-use byteorder::{ReadBytesExt, WriteBytesExt, LE};
+use {
+    byteorder::{ReadBytesExt, WriteBytesExt, LE},
+    std::io::{self, Read, Write},
+};
 
 pub trait DatumRepr: Sized {
     fn read<R: Read>(src: &mut R) -> io::Result<Self>;

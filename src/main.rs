@@ -1,10 +1,11 @@
 mod metadata;
 mod ui;
 
-use std::{ffi::OsString, path::PathBuf};
-
-use eframe::egui;
-use libbgesav::Sav;
+use {
+    eframe::egui,
+    libbgesav::Sav,
+    std::{ffi::OsString, path::PathBuf},
+};
 
 struct LoadPayload {
     path: OsString,

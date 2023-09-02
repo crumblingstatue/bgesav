@@ -1,3 +1,5 @@
+use steamlocate::SteamDir;
+
 mod metadata;
 mod ui;
 
@@ -18,10 +20,16 @@ fn main() {
         sav: Sav::load_from_file(path.as_ref()).unwrap(),
         path,
     });
+    let mut bge_path = None;
+    if let Some(mut dir) = SteamDir::locate() {
+        if let Some(app) = dir.app(&15130) {
+            bge_path = Some(app.path.clone());
+        }
+    }
     eframe::run_native(
         "BG&E Save editor",
         native_options,
-        Box::new(|cc| Box::new(App::new(cc, payload))),
+        Box::new(|cc| Box::new(App::new(cc, payload, bge_path))),
     )
     .unwrap();
 }
@@ -30,7 +38,11 @@ struct App {
     save_path: PathBuf,
     sav: Option<Sav>,
     ui_state: UiState,
+    bge_path: Option<PathBuf>,
+    slot_exist_array: SlotExistArray,
 }
+
+pub type SlotExistArray = [bool; 5];
 
 struct UiState {
     tab: Tab,
@@ -70,17 +82,25 @@ enum InvTab {
 }
 
 impl App {
-    fn new(_cc: &eframe::CreationContext<'_>, payload: Option<LoadPayload>) -> Self {
+    fn new(
+        _cc: &eframe::CreationContext<'_>,
+        payload: Option<LoadPayload>,
+        bge_path: Option<PathBuf>,
+    ) -> Self {
         match payload {
             Some(payload) => Self {
                 save_path: payload.path.into(),
                 sav: Some(payload.sav),
                 ui_state: UiState::default(),
+                slot_exist_array: [false; 5],
+                bge_path,
             },
             None => Self {
                 save_path: Default::default(),
                 sav: Default::default(),
                 ui_state: UiState::default(),
+                slot_exist_array: [false; 5],
+                bge_path,
             },
         }
     }

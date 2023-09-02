@@ -5,19 +5,53 @@ use {
 };
 
 pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
+    let displayed = app.save_path.display().to_string();
+    let s = if displayed.is_empty() {
+        "<No file>".to_string()
+    } else {
+        displayed
+    };
+    ui.label(s);
     ui.horizontal(|ui| {
-        let displayed = app.save_path.display().to_string();
-        let s = if displayed.is_empty() {
-            "<No file>".to_string()
-        } else {
-            displayed
-        };
-        ui.label(s);
-        if ui.button("🗁 Open...").clicked() {
+        if ui.button("🗁 Load file...").clicked() {
             if let Some(path) = rfd::FileDialog::default().pick_file() {
                 let sav = Sav::load_from_file(&path).unwrap();
                 app.sav = Some(sav);
                 app.save_path = path;
+            }
+        }
+        if let Some(path) = &app.bge_path {
+            if ui
+                .menu_button("Load slot...", |ui| {
+                    for (i, &exists) in app.slot_exist_array.iter().enumerate() {
+                        if exists && ui.button(format!("Slot {i}")).clicked() {
+                            let sav_path = path.join(format!("slot{i}.sav"));
+                            let sav = Sav::load_from_file(&sav_path).unwrap();
+                            app.sav = Some(sav);
+                            app.save_path = sav_path;
+                            ui.close_menu();
+                        }
+                    }
+                })
+                .response
+                .clicked()
+            {
+                for (i, slot) in app.slot_exist_array.iter_mut().enumerate() {
+                    *slot = path.join(format!("slot{i}.sav")).exists();
+                }
+            };
+            if let Some(sav) = &app.sav {
+                ui.menu_button("Save to slot...", |ui| {
+                    for i in 0..5 {
+                        if ui.button(format!("Slot {i}")).clicked() {
+                            eprintln!("{:?}", sav.save_to_file(&path.join(format!("slot{i}.sav"))));
+                            ui.close_menu();
+                        }
+                    }
+                });
+            }
+            if ui.button("Open save dir").clicked() {
+                eprintln!("{:?}", open::that(path));
             }
         }
         let (ctrl_r, ctrl_s) = ui.input(|inp| {

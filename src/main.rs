@@ -1,6 +1,7 @@
 use steamlocate::SteamDir;
 
 mod metadata;
+mod sally_idx;
 mod ui;
 
 use {

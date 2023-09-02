@@ -1,5 +1,5 @@
 use {
-    crate::{metadata, App, InvTab, Tab, UiState},
+    crate::{metadata, sally_idx::IndexEntry, App, InvTab, Tab, UiState},
     eframe::egui::{self, Ui},
     libbgesav::{FollowState, Inventory, Password, Sav},
 };
@@ -45,6 +45,12 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
                     for i in 0..5 {
                         if ui.button(format!("Slot {i}")).clicked() {
                             eprintln!("{:?}", sav.save_to_file(&path.join(format!("slot{i}.sav"))));
+                            let idx_en = IndexEntry {
+                                location: sav.current_map as u16,
+                                entrance: sav.map_entry as u16,
+                                play_time: 1, // TODO: Fetch from save file
+                            };
+                            eprintln!("{:?}", idx_en.write_to_index(&path.join("sally.idx"), i));
                             ui.close_menu();
                         }
                     }

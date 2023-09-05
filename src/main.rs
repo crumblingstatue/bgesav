@@ -1,4 +1,6 @@
-use steamlocate::SteamDir;
+#![warn(clippy::unwrap_used)]
+
+use std::error::Error;
 
 mod metadata;
 mod sally_idx;
@@ -8,6 +10,7 @@ use {
     eframe::egui,
     libbgesav::Sav,
     std::{ffi::OsString, path::PathBuf},
+    steamlocate::SteamDir,
 };
 
 struct LoadPayload {
@@ -15,12 +18,15 @@ struct LoadPayload {
     sav: Sav,
 }
 
-fn main() {
+fn try_main() -> Result<(), Box<dyn Error>> {
     let native_options = eframe::NativeOptions::default();
-    let payload = std::env::args_os().nth(1).map(|path| LoadPayload {
-        sav: Sav::load_from_file(path.as_ref()).unwrap(),
-        path,
-    });
+    let payload = match std::env::args_os().nth(1) {
+        Some(path) => Some(LoadPayload {
+            sav: Sav::load_from_file(path.as_ref())?,
+            path,
+        }),
+        None => None,
+    };
     let mut bge_path = None;
     if let Some(mut dir) = SteamDir::locate() {
         if let Some(app) = dir.app(&15130) {
@@ -31,8 +37,22 @@ fn main() {
         "BG&E Save editor",
         native_options,
         Box::new(|cc| Box::new(App::new(cc, payload, bge_path))),
-    )
-    .unwrap();
+    )?;
+    Ok(())
+}
+
+fn err_msg(e: &(impl Error + ?Sized)) {
+    rfd::MessageDialog::new()
+        .set_title("Error")
+        .set_description(&e.to_string())
+        .show();
+}
+
+fn main() {
+    match try_main() {
+        Ok(()) => (),
+        Err(e) => err_msg(e.as_ref()),
+    }
 }
 
 struct App {

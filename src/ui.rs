@@ -15,9 +15,13 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
     ui.horizontal(|ui| {
         if ui.button("🗁 Load file...").clicked() {
             if let Some(path) = rfd::FileDialog::default().pick_file() {
-                let sav = Sav::load_from_file(&path).unwrap();
-                app.sav = Some(sav);
-                app.save_path = path;
+                match Sav::load_from_file(&path) {
+                    Ok(sav) => {
+                        app.sav = Some(sav);
+                        app.save_path = path;
+                    }
+                    Err(e) => err_msg(e),
+                }
             }
         }
         if let Some(path) = &app.bge_path {
@@ -30,10 +34,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
                             let sav = match Sav::load_from_file(&sav_path) {
                                 Ok(sav) => sav,
                                 Err(e) => {
-                                    rfd::MessageDialog::new()
-                                        .set_title("Error")
-                                        .set_description(&e.to_string())
-                                        .show();
+                                    err_msg(e);
                                     break;
                                 }
                             };
@@ -79,12 +80,16 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
         if !app.save_path.as_os_str().is_empty()
             && (ui.button("⟲ Reload").on_hover_text("Ctrl+R").clicked() || ctrl_r)
         {
-            let sav = Sav::load_from_file(&app.save_path).unwrap();
-            app.sav = Some(sav);
+            match Sav::load_from_file(&app.save_path) {
+                Ok(sav) => app.sav = Some(sav),
+                Err(e) => err_msg(e),
+            }
         }
         if let Some(sav) = &app.sav {
             if ui.button("💾 Save").on_hover_text("Ctrl+S").clicked() || ctrl_s {
-                sav.save_to_file(&app.save_path).unwrap();
+                if let Err(e) = sav.save_to_file(&app.save_path) {
+                    err_msg(e);
+                }
             }
         }
     });
@@ -102,6 +107,13 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
             }
         });
     }
+}
+
+fn err_msg(e: std::io::Error) {
+    rfd::MessageDialog::new()
+        .set_title("Error")
+        .set_description(&e.to_string())
+        .show();
 }
 
 fn update_pw_bufs(pw_bufs: &mut [String; 30], sav: &Sav) {

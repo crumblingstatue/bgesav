@@ -25,11 +25,20 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
                 .menu_button("Load slot...", |ui| {
                     for (i, &exists) in app.slot_exist_array.iter().enumerate() {
                         if exists && ui.button(format!("Slot {i}")).clicked() {
+                            ui.close_menu();
                             let sav_path = path.join(format!("slot{i}.sav"));
-                            let sav = Sav::load_from_file(&sav_path).unwrap();
+                            let sav = match Sav::load_from_file(&sav_path) {
+                                Ok(sav) => sav,
+                                Err(e) => {
+                                    rfd::MessageDialog::new()
+                                        .set_title("Error")
+                                        .set_description(&e.to_string())
+                                        .show();
+                                    break;
+                                }
+                            };
                             app.sav = Some(sav);
                             app.save_path = sav_path;
-                            ui.close_menu();
                         }
                     }
                 })

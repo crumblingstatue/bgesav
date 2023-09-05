@@ -206,6 +206,7 @@ pub(crate) fn follow_state_ui(id: u8, follow_state: &mut FollowState, ui: &mut U
             FollowState::Unknown2 => "Unknown2",
             FollowState::Unknown3 => "Unknown3",
             FollowState::Unknown4 => "Unknown4",
+            FollowState::Invalid(_) => "Invalid",
         }
     }
 

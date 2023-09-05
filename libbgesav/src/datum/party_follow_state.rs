@@ -11,6 +11,7 @@ pub enum FollowState {
     Unknown3,
     /// Pey'j is fixing mdisk reader in workshop, can talk to him
     Unknown4,
+    Invalid(u8),
 }
 
 impl SaveDatum for FollowState {
@@ -23,7 +24,7 @@ impl SaveDatum for FollowState {
             2 => FollowState::Unknown2,
             3 => FollowState::Unknown3,
             4 => FollowState::Unknown4,
-            _ => panic!("Unknown follow state: {repr}"),
+            x => FollowState::Invalid(x),
         }
     }
 
@@ -34,6 +35,7 @@ impl SaveDatum for FollowState {
             FollowState::Unknown2 => 2,
             FollowState::Unknown3 => 3,
             FollowState::Unknown4 => 4,
+            FollowState::Invalid(x) => x,
         }
     }
 }

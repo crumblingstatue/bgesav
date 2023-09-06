@@ -151,7 +151,12 @@ pub(crate) fn map(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui, map_info: 
         if let Some(map_info_en) = map_info.get(&sav.current_map) {
             if !map_info_en.entrances.is_empty() {
                 egui::ComboBox::from_label("Entrance")
-                    .selected_text(map_info_en.entrances[&sav.map_entry])
+                    .selected_text(
+                        *map_info_en
+                            .entrances
+                            .get(&sav.map_entry)
+                            .unwrap_or(&"<unknown>"),
+                    )
                     .show_ui(ui, |ui| {
                         for (&idx, &name) in &map_info_en.entrances {
                             ui.selectable_value(&mut sav.map_entry, idx, name);

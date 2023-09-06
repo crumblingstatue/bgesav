@@ -302,7 +302,10 @@ pub(crate) fn passwords(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui) {
         for (i, pw) in sav.passwords.iter_mut().enumerate() {
             ui.label(metadata::password::NAMES[i]);
             if ui
-                .text_edit_singleline(&mut ui_state.password_bufs[i])
+                .add_sized(
+                    (48.0, 24.0),
+                    egui::TextEdit::singleline(&mut ui_state.password_bufs[i]),
+                )
                 .lost_focus()
                 && ui.input(|inp| inp.key_pressed(egui::Key::Enter))
             {

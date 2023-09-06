@@ -1,6 +1,9 @@
 #![warn(clippy::unwrap_used)]
 
-use std::error::Error;
+use {
+    metadata::map::{fill_map_info, MapInfo},
+    std::{collections::HashMap, error::Error},
+};
 
 mod metadata;
 mod sally_idx;
@@ -61,6 +64,7 @@ struct App {
     ui_state: UiState,
     bge_path: Option<PathBuf>,
     slot_exist_array: SlotExistArray,
+    map_info: MapInfo,
 }
 
 pub type SlotExistArray = [bool; 5];
@@ -108,6 +112,8 @@ impl App {
         payload: Option<LoadPayload>,
         bge_path: Option<PathBuf>,
     ) -> Self {
+        let mut map_info = HashMap::default();
+        fill_map_info(&mut map_info);
         match payload {
             Some(payload) => Self {
                 save_path: payload.path.into(),
@@ -115,6 +121,7 @@ impl App {
                 ui_state: UiState::default(),
                 slot_exist_array: [false; 5],
                 bge_path,
+                map_info,
             },
             None => Self {
                 save_path: Default::default(),
@@ -122,6 +129,7 @@ impl App {
                 ui_state: UiState::default(),
                 slot_exist_array: [false; 5],
                 bge_path,
+                map_info,
             },
         }
     }
@@ -135,7 +143,7 @@ impl eframe::App for App {
         egui::CentralPanel::default().show(ctx, |ui| {
             if let Some(sav) = &mut self.sav {
                 match self.ui_state.tab {
-                    Tab::Map => ui::map(sav, &mut self.ui_state, ui),
+                    Tab::Map => ui::map(sav, &mut self.ui_state, ui, &self.map_info),
                     Tab::Party => ui::party(sav, ui),
                     Tab::MDisk => ui::mdisk(sav, ui),
                     Tab::Inventory => ui::inventory(sav, ui, &mut self.ui_state),

@@ -1,5 +1,5 @@
 use {
-    crate::{metadata, sally_idx::IndexEntry, App, InvTab, Tab, UiState},
+    crate::{metadata, metadata::map::MapInfo, sally_idx::IndexEntry, App, InvTab, Tab, UiState},
     eframe::egui::{self, Ui},
     libbgesav::{FollowState, Inventory, Password, Sav},
 };
@@ -123,18 +123,21 @@ fn update_pw_bufs(pw_bufs: &mut [String; 30], sav: &Sav) {
     }
 }
 
-pub(crate) fn map(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui) {
+pub(crate) fn map(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui, map_info: &MapInfo) {
     ui.horizontal(|ui| {
         egui::ComboBox::from_label("Current map")
-            .selected_text(map_text(sav.current_map))
+            .selected_text(map_text(sav.current_map, map_info))
             .width(200.0)
             .show_ui(ui, |ui| {
                 for i in 0..=255 {
-                    if metadata::map::NAMES[i as usize]
-                        .to_ascii_lowercase()
-                        .contains(&ui_state.map_filter.to_ascii_lowercase())
-                    {
-                        ui.selectable_value(&mut sav.current_map, i, map_text(i));
+                    if let Some(map_info_en) = map_info.get(&i) {
+                        if map_info_en
+                            .name
+                            .to_ascii_lowercase()
+                            .contains(&ui_state.map_filter.to_ascii_lowercase())
+                        {
+                            ui.selectable_value(&mut sav.current_map, i, map_text(i, map_info));
+                        }
                     }
                 }
             });
@@ -144,12 +147,27 @@ pub(crate) fn map(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui) {
         }
     });
     ui.separator();
-    ui.label("Entry");
-    ui.add(egui::DragValue::new(&mut sav.map_entry));
+    ui.horizontal(|ui| {
+        if let Some(map_info_en) = map_info.get(&sav.current_map) {
+            if !map_info_en.entrances.is_empty() {
+                egui::ComboBox::from_label("Entrance")
+                    .selected_text(map_info_en.entrances[&sav.map_entry])
+                    .show_ui(ui, |ui| {
+                        for (&idx, &name) in &map_info_en.entrances {
+                            ui.selectable_value(&mut sav.map_entry, idx, name);
+                        }
+                    });
+            }
+        }
+        ui.add(egui::DragValue::new(&mut sav.map_entry));
+    });
 }
 
-fn map_text(idx: u8) -> String {
-    format!("{idx}: {name}", name = metadata::map::NAMES[idx as usize])
+fn map_text(idx: u8, map_info: &MapInfo) -> String {
+    format!(
+        "{idx}: {name}",
+        name = map_info.get(&idx).map_or("<unknown>", |en| { en.name })
+    )
 }
 
 pub(crate) fn mdisk(sav: &mut Sav, ui: &mut Ui) {

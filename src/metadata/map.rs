@@ -37,6 +37,10 @@ maps! {
       ]
    32: "Peyj's workshop"
    33: "Lightouse"
+      [
+         0: "Outside"
+         1: "From hangar"
+      ]
    34: "First boss map"
    35: "Destroyed lighthouse"
    46: "Factory Entrance"
@@ -107,7 +111,7 @@ maps! {
    154: "Revolution scene"
    160: "Crash"
    161: "Crash"
-   170: "Transmitter entrance"
+   170: "Transmitter entrance" [42: "MDisk reader"]
    171: "Crash"
    180: "Cloister"
    [

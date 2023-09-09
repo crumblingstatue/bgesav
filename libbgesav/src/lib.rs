@@ -61,12 +61,12 @@ macro_rules! sav_def {
     };
 }
 
-pub type Inventory = [i32; 50];
+pub type Inventory = [i32; 49];
 pub type Password = [i32; 7];
 pub type Passwords = [Password; 30];
 
 fn default_inv() -> Inventory {
-    [0; 50]
+    [0; 49]
 }
 
 sav_def! {
@@ -79,10 +79,11 @@ sav_def! {
        double_h_max_health    856    f32: 80.;
        jade_max_health        884    f32: 80.;
        hovercraft_max_health  892    f32: 80.;
-       peyj_inventory         1000   Inventory: default_inv();
-       double_h_inventory     1200   Inventory: default_inv();
-       jade_inventory         2600   Inventory: default_inv();
-       hovercraft_inventory   3000   Inventory: default_inv();
+       inventory_offset       1000   i32: 50; // Needs to be 50 for things to function properly.
+       peyj_inventory         1004   Inventory: default_inv();
+       double_h_inventory     1204   Inventory: default_inv();
+       jade_inventory         2604   Inventory: default_inv();
+       hovercraft_inventory   3004   Inventory: default_inv();
        map_entry              11084  u8: 0;
        hovercraft_dock_x      11212  f32: 73.;
        hovercraft_dock_y      11216  f32: 1.46;

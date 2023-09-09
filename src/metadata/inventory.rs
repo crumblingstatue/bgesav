@@ -1,5 +1,4 @@
-pub const NAMES: [&str; 50] = [
-    "Unknown",
+pub const NAMES: [&str; 49] = [
     "Camera",
     "Cutting Pliers",
     "Fuse",

@@ -3,10 +3,13 @@
 mod datum;
 
 pub use datum::{DatumRepr, FollowState, Mdisks, PartyPresent, SaveDatum};
-use std::{
-    fs::{File, OpenOptions},
-    io::{self, Read, Seek, Write},
-    path::Path,
+use {
+    datum::hovercraft::{HovercraftCondition, HovercraftState},
+    std::{
+        fs::{File, OpenOptions},
+        io::{self, Read, Seek, Write},
+        path::Path,
+    },
 };
 
 fn read_datum<T: SaveDatum, R: Read>(reader: &mut R) -> io::Result<T> {
@@ -67,14 +70,19 @@ sav_def! {
        jade_inventory         2600   Inventory
        hovercraft_inventory   3000   Inventory
        map_entry              11084  u8
+       hovercraft_dock_x      11212  f32
+       hovercraft_dock_y      11216  f32
        passwords              11244  Passwords
        peyj_curr_health       13324  f32
        pearls                 13264  i32
+       hovercraft_dock_map    13312  u8
        double_h_curr_health   13328  f32
        jade_curr_health       13356  f32
        hovercraft_curr_health 13364  f32
        peyj_follow_state      14300  FollowState
        double_h_follow_state  14304  FollowState
+       hovercraft_state       14340  HovercraftState
        units                  14348  i32
        party                  14543  PartyPresent
+       hovercraft_condition   14696  HovercraftCondition
 }

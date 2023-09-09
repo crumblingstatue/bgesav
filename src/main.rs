@@ -5,6 +5,7 @@ use {
     std::{collections::HashMap, error::Error},
 };
 
+mod bitmanip_yet_again;
 mod metadata;
 mod sally_idx;
 mod ui;
@@ -144,7 +145,7 @@ impl eframe::App for App {
             if let Some(sav) = &mut self.sav {
                 match self.ui_state.tab {
                     Tab::Map => ui::map(sav, &mut self.ui_state, ui, &self.map_info),
-                    Tab::Party => ui::party(sav, ui),
+                    Tab::Party => ui::party(sav, ui, &self.map_info, &mut self.ui_state),
                     Tab::MDisk => ui::mdisk(sav, ui),
                     Tab::Inventory => ui::inventory(sav, ui, &mut self.ui_state),
                     Tab::Passwords => ui::passwords(sav, &mut self.ui_state, ui),

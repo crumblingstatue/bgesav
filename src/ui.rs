@@ -1,5 +1,10 @@
 use {
-    crate::{metadata, metadata::map::MapInfo, sally_idx::IndexEntry, App, InvTab, Tab, UiState},
+    crate::{
+        bitmanip_yet_again::Bitmanip,
+        metadata::{self, map::MapInfo},
+        sally_idx::IndexEntry,
+        App, InvTab, Tab, UiState,
+    },
     eframe::egui::{self, Ui},
     libbgesav::{FollowState, Inventory, Password, Sav},
 };
@@ -124,28 +129,7 @@ fn update_pw_bufs(pw_bufs: &mut [String; 30], sav: &Sav) {
 }
 
 pub(crate) fn map(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui, map_info: &MapInfo) {
-    ui.horizontal(|ui| {
-        egui::ComboBox::from_label("Current map")
-            .selected_text(map_text(sav.current_map, map_info))
-            .width(200.0)
-            .show_ui(ui, |ui| {
-                for i in 0..=255 {
-                    if let Some(map_info_en) = map_info.get(&i) {
-                        if map_info_en
-                            .name
-                            .to_ascii_lowercase()
-                            .contains(&ui_state.map_filter.to_ascii_lowercase())
-                        {
-                            ui.selectable_value(&mut sav.current_map, i, map_text(i, map_info));
-                        }
-                    }
-                }
-            });
-        ui.add(egui::TextEdit::singleline(&mut ui_state.map_filter).hint_text("Filter"));
-        if !ui_state.map_filter.is_empty() && ui.button("🗙").on_hover_text("Clear").clicked() {
-            ui_state.map_filter.clear();
-        }
-    });
+    map_select_dropdown(ui, "Current map", &mut sav.current_map, map_info, ui_state);
     ui.separator();
     ui.horizontal(|ui| {
         if let Some(map_info_en) = map_info.get(&sav.current_map) {
@@ -168,6 +152,37 @@ pub(crate) fn map(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui, map_info: 
     });
 }
 
+fn map_select_dropdown(
+    ui: &mut Ui,
+    label: &str,
+    map_val: &mut u8,
+    map_info: &std::collections::HashMap<u8, metadata::map::MapDef>,
+    ui_state: &mut UiState,
+) {
+    ui.horizontal(|ui| {
+        egui::ComboBox::from_label(label)
+            .selected_text(map_text(*map_val, map_info))
+            .width(200.0)
+            .show_ui(ui, |ui| {
+                for i in 0..=255 {
+                    if let Some(map_info_en) = map_info.get(&i) {
+                        if map_info_en
+                            .name
+                            .to_ascii_lowercase()
+                            .contains(&ui_state.map_filter.to_ascii_lowercase())
+                        {
+                            ui.selectable_value(map_val, i, map_text(i, map_info));
+                        }
+                    }
+                }
+            });
+        ui.add(egui::TextEdit::singleline(&mut ui_state.map_filter).hint_text("Filter"));
+        if !ui_state.map_filter.is_empty() && ui.button("🗙").on_hover_text("Clear").clicked() {
+            ui_state.map_filter.clear();
+        }
+    });
+}
+
 fn map_text(idx: u8, map_info: &MapInfo) -> String {
     format!(
         "{idx}: {name}",
@@ -181,7 +196,7 @@ pub(crate) fn mdisk(sav: &mut Sav, ui: &mut Ui) {
     }
 }
 
-pub(crate) fn party(sav: &mut Sav, ui: &mut Ui) {
+pub(crate) fn party(sav: &mut Sav, ui: &mut Ui, map_info: &MapInfo, ui_state: &mut UiState) {
     ui.heading("Jade");
     ui.horizontal(|ui| {
         ui.label("Max health");
@@ -216,6 +231,30 @@ pub(crate) fn party(sav: &mut Sav, ui: &mut Ui) {
         ui.label("/");
         ui.add(egui::DragValue::new(&mut sav.hovercraft_max_health));
     });
+    ui.label("Condition flags");
+    let labels = ["?", "motor healthy", "?", "?", "?", "?", "?", "?"];
+    ui.horizontal(|ui| {
+        for (i, label) in labels.into_iter().enumerate() {
+            let mut on = sav.hovercraft_condition.bitflags.nth_bit_set(i);
+            if ui.checkbox(&mut on, label).clicked() {
+                sav.hovercraft_condition.bitflags.toggle_nth_bit(i);
+            }
+        }
+    });
+    map_select_dropdown(
+        ui,
+        "Docking map",
+        &mut sav.hovercraft_dock_map,
+        map_info,
+        ui_state,
+    );
+    ui.label("Docking position");
+    ui.horizontal(|ui| {
+        ui.add(egui::DragValue::new(&mut sav.hovercraft_dock_x));
+        ui.add(egui::DragValue::new(&mut sav.hovercraft_dock_y));
+    });
+    ui.label("Ride state");
+    ui.add(egui::DragValue::new(&mut sav.hovercraft_state.value));
     ui.heading("Alpha Soldier");
     ui.checkbox(&mut sav.party.alpha_soldier, "present");
     //follow_state_ui(&mut sav.peyj_follow_state.0, ui);

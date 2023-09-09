@@ -61,7 +61,11 @@ maps! {
    57: "Nutripills vat" [10: "in front of conveyor"]
    58: "Loading dock" [1: "normal entrance" 2: "closed bar corridor"]
    59: "Computer room"
-   60: "Unused map(?) (weird, worth exploring)"
+   60: "Nutripills sewers (unused map)"
+      [
+         6: "Inside 1"
+         9: "Inside 2"
+      ]
    61: "Routing"
    62: "Control room"
    63: "Shipping room"

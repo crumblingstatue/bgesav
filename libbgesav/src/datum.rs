@@ -1,3 +1,4 @@
+pub mod hovercraft;
 mod mdisks;
 mod party_follow_state;
 mod party_present;

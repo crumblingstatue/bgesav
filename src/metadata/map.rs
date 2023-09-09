@@ -90,6 +90,10 @@ maps! {
    93: "<crash>"
    94: "<crash>"
    100: "-"
+   109: "East district (Alpha HQ)"
+   [
+      42: "MDisk Reader"
+   ]
    110: "Races 1 and 2"
    111: "<crash>"
    114: "Surveillance room"

@@ -21,7 +21,7 @@ fn write_datum<T: SaveDatum, W: Write>(writer: &mut W, value: &T) -> io::Result<
 }
 
 macro_rules! sav_def {
-    ($($name:ident $offset:literal $type:ty)*) => {
+    ($($name:ident $offset:literal $type:ty: $def:expr;)*) => {
         pub struct Sav {
             $(
                 pub $name: $type,
@@ -41,12 +41,21 @@ macro_rules! sav_def {
                 })
             }
             pub fn save_to_file(&self, path: &Path) -> io::Result<()> {
-                let mut f = OpenOptions::new().write(true).open(path)?;
+                let mut f = OpenOptions::new().write(true).create(true).open(path)?;
                 $(
                     f.seek(std::io::SeekFrom::Start($offset))?;
                     write_datum(&mut f, &self.$name)?;
                 )*
                 Ok(())
+            }
+        }
+        impl Default for Sav {
+            fn default() -> Self {
+                Self {
+                    $(
+                        $name: $def,
+                    )*
+                }
             }
         }
     };
@@ -56,33 +65,38 @@ pub type Inventory = [i32; 50];
 pub type Password = [i32; 7];
 pub type Passwords = [Password; 30];
 
+fn default_inv() -> Inventory {
+    [0; 50]
+}
+
 sav_def! {
     // name                   offset type
-       mdisks                 600    Mdisks
-       disable_subtitles      604    bool
-       current_map            612    u8
-       peyj_max_health        852    f32
-       double_h_max_health    856    f32
-       jade_max_health        884    f32
-       hovercraft_max_health  892    f32
-       peyj_inventory         1000   Inventory
-       double_h_inventory     1200   Inventory
-       jade_inventory         2600   Inventory
-       hovercraft_inventory   3000   Inventory
-       map_entry              11084  u8
-       hovercraft_dock_x      11212  f32
-       hovercraft_dock_y      11216  f32
-       passwords              11244  Passwords
-       peyj_curr_health       13324  f32
-       pearls                 13264  i32
-       hovercraft_dock_map    13312  u8
-       double_h_curr_health   13328  f32
-       jade_curr_health       13356  f32
-       hovercraft_curr_health 13364  f32
-       peyj_follow_state      14300  FollowState
-       double_h_follow_state  14304  FollowState
-       hovercraft_state       14340  HovercraftState
-       units                  14348  i32
-       party                  14543  PartyPresent
-       hovercraft_condition   14696  HovercraftCondition
+       mdisks                 600    Mdisks: Default::default();
+       disable_subtitles      604    bool: true;
+       current_map            612    u8: 33; // Lighthouse
+       hangar_mystery_value   776    f32: -1.; // If not -1, things go crazy in Hangar map
+       peyj_max_health        852    f32: 80.;
+       double_h_max_health    856    f32: 80.;
+       jade_max_health        884    f32: 80.;
+       hovercraft_max_health  892    f32: 80.;
+       peyj_inventory         1000   Inventory: default_inv();
+       double_h_inventory     1200   Inventory: default_inv();
+       jade_inventory         2600   Inventory: default_inv();
+       hovercraft_inventory   3000   Inventory: default_inv();
+       map_entry              11084  u8: 0;
+       hovercraft_dock_x      11212  f32: 73.;
+       hovercraft_dock_y      11216  f32: 1.46;
+       passwords              11244  Passwords: Default::default();
+       peyj_curr_health       13324  f32: 80.;
+       pearls                 13264  i32: Default::default();
+       hovercraft_dock_map    13312  u8: 31; // Hangar
+       double_h_curr_health   13328  f32: 80.;
+       jade_curr_health       13356  f32: 80.;
+       hovercraft_curr_health 13364  f32: 80.;
+       peyj_follow_state      14300  FollowState: FollowState::Follow;
+       double_h_follow_state  14304  FollowState: FollowState::Follow;
+       hovercraft_state       14340  HovercraftState: HovercraftState { value: 0 };
+       units                  14348  i32: Default::default();
+       party                  14543  PartyPresent: PartyPresent { peyj: false, double_h: false, alpha_soldier: false };
+       hovercraft_condition   14696  HovercraftCondition: HovercraftCondition { bitflags: 0 };
 }

@@ -18,6 +18,9 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
     };
     ui.label(s);
     ui.horizontal(|ui| {
+        if ui.button("Create clean save").clicked() {
+            app.sav = Some(Sav::default());
+        }
         if ui.button("🗁 Load file...").clicked() {
             if let Some(path) = rfd::FileDialog::default().pick_file() {
                 match Sav::load_from_file(&path) {

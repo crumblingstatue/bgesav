@@ -1,6 +1,6 @@
 use super::SaveDatum;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Mdisks {
     pub disks: [bool; 16],
 }

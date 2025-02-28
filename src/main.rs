@@ -32,9 +32,20 @@ fn try_main() -> Result<(), Box<dyn Error>> {
         None => None,
     };
     let mut bge_path = None;
-    if let Some(mut dir) = SteamDir::locate() {
-        if let Some(app) = dir.app(&15130) {
-            bge_path = Some(app.path.clone());
+    match SteamDir::locate() {
+        Ok(dir) => match dir.find_app(15130) {
+            Ok(Some((app, library))) => {
+                bge_path = Some(library.resolve_app_dir(&app));
+            }
+            Ok(None) => {
+                eprintln!("TODO: No app found");
+            }
+            Err(e) => {
+                eprintln!("TODO: Error trying to find app: {e}");
+            }
+        },
+        Err(e) => {
+            eprintln!("TODO: Error locating steam dir: {e}");
         }
     }
     eframe::run_native(

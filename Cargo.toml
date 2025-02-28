@@ -11,7 +11,7 @@ eframe = "0.31.0"
 libbgesav = { path = "libbgesav" }
 open = "5.0.0"
 rfd = "0.11.4"
-steamlocate = "1.2.1"
+steamlocate = "2.0"
 
 [workspace]
 members = ["libbgesav"]

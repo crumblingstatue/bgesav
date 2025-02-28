@@ -35,6 +35,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
         if let Some(path) = &app.bge_path {
             if ui
                 .menu_button("Load slot...", |ui| {
+                    ui.style_mut().wrap_mode = Some(egui::TextWrapMode::Extend);
                     for (i, &exists) in app.slot_exist_array.iter().enumerate() {
                         if exists && ui.button(format!("Slot {i}")).clicked() {
                             ui.close_menu();

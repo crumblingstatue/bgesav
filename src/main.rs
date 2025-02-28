@@ -40,7 +40,7 @@ fn try_main() -> Result<(), Box<dyn Error>> {
     eframe::run_native(
         "BG&E Save editor",
         native_options,
-        Box::new(|cc| Box::new(App::new(cc, payload, bge_path))),
+        Box::new(|cc| Ok(Box::new(App::new(cc, payload, bge_path)))),
     )?;
     Ok(())
 }

@@ -1,4 +1,6 @@
 #![feature(min_specialization, array_try_from_fn)]
+#![warn(clippy::pedantic)]
+#![expect(clippy::missing_errors_doc)]
 
 mod datum;
 
@@ -71,7 +73,7 @@ fn default_inv() -> Inventory {
 
 sav_def! {
     // name                   offset type
-       mdisks                 600    Mdisks: Default::default();
+       mdisks                 600    Mdisks: Mdisks::default();
        disable_subtitles      604    bool: true;
        current_map            612    u8: 33; // Lighthouse
        hangar_mystery_value   776    f32: -1.; // If not -1, things go crazy in Hangar map

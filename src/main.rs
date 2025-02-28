@@ -32,27 +32,10 @@ fn try_main() -> Result<(), Box<dyn Error>> {
         }),
         None => None,
     };
-    let mut bge_path = None;
-    match SteamDir::locate() {
-        Ok(dir) => match dir.find_app(15130) {
-            Ok(Some((app, library))) => {
-                bge_path = Some(library.resolve_app_dir(&app));
-            }
-            Ok(None) => {
-                eprintln!("TODO: No app found");
-            }
-            Err(e) => {
-                eprintln!("TODO: Error trying to find app: {e}");
-            }
-        },
-        Err(e) => {
-            eprintln!("TODO: Error locating steam dir: {e}");
-        }
-    }
     eframe::run_native(
         "BG&E Save editor",
         native_options,
-        Box::new(|cc| Ok(Box::new(App::new(cc, payload, bge_path)))),
+        Box::new(|cc| Ok(Box::new(App::new(cc, payload)))),
     )?;
     Ok(())
 }
@@ -158,13 +141,35 @@ enum InvTab {
 }
 
 impl App {
-    fn new(
-        _cc: &eframe::CreationContext<'_>,
-        payload: Option<LoadPayload>,
-        bge_path: Option<PathBuf>,
-    ) -> Self {
+    fn new(_cc: &eframe::CreationContext<'_>, payload: Option<LoadPayload>) -> Self {
         let mut map_info = HashMap::default();
         fill_map_info(&mut map_info);
+        let mut bge_path = None;
+        let mut modal = ModalPopup::default();
+        match SteamDir::locate() {
+            Ok(dir) => match dir.find_app(15130) {
+                Ok(Some((app, library))) => {
+                    let path = library.resolve_app_dir(&app);
+                    if path.exists() {
+                        bge_path = Some(path);
+                    } else {
+                        modal.err(
+                            "Error trying to find BG&E",
+                            format!("Directory doesn't exist ({path:?})"),
+                        );
+                    }
+                }
+                Ok(None) => {
+                    modal.err("Error trying to find BG&E", "Not found");
+                }
+                Err(e) => {
+                    modal.err("Error trying to find BG&E", e);
+                }
+            },
+            Err(e) => {
+                modal.err("Error trying to locate Steam dir", e);
+            }
+        }
         match payload {
             Some(payload) => Self {
                 save_path: payload.path.into(),
@@ -173,7 +178,7 @@ impl App {
                 slot_exist_array: [false; 5],
                 bge_path,
                 map_info,
-                modal: Default::default(),
+                modal,
                 file_dialog: Default::default(),
             },
             None => Self {
@@ -183,7 +188,7 @@ impl App {
                 slot_exist_array: [false; 5],
                 bge_path,
                 map_info,
-                modal: Default::default(),
+                modal,
                 file_dialog: Default::default(),
             },
         }

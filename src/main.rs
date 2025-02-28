@@ -1,6 +1,7 @@
 #![warn(clippy::unwrap_used)]
 
 use {
+    egui_file_dialog::FileDialog,
     metadata::map::{MapInfo, fill_map_info},
     std::{collections::HashMap, error::Error},
 };
@@ -56,17 +57,10 @@ fn try_main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn err_msg(e: &(impl Error + ?Sized)) {
-    rfd::MessageDialog::new()
-        .set_title("Error")
-        .set_description(&e.to_string())
-        .show();
-}
-
 fn main() {
     match try_main() {
         Ok(()) => (),
-        Err(e) => err_msg(e.as_ref()),
+        Err(e) => eprintln!("Fatal error: {e}"),
     }
 }
 
@@ -77,6 +71,51 @@ struct App {
     bge_path: Option<PathBuf>,
     slot_exist_array: SlotExistArray,
     map_info: MapInfo,
+    modal: ModalPopup,
+    file_dialog: FileDialog,
+}
+
+#[derive(Default)]
+pub struct ModalPopup {
+    payload: Option<ModalPayload>,
+}
+impl ModalPopup {
+    pub fn err(&mut self, context: &'static str, e: impl std::fmt::Display) {
+        self.payload = Some(ModalPayload::Error {
+            context,
+            msg: e.to_string(),
+        });
+    }
+
+    fn update(&mut self, ctx: &egui::Context) {
+        if let Some(payload) = &self.payload {
+            let mut close = false;
+            egui::Modal::new("modal_popup".into()).show(ctx, |ui| {
+                match payload {
+                    ModalPayload::Error { context, msg } => {
+                        ui.vertical_centered(|ui| {
+                            ui.heading("Error");
+                        });
+                        ui.add_space(16.0);
+                        ui.label(format!("{context}: {msg}"));
+                        ui.add_space(16.0);
+                    }
+                }
+                ui.vertical_centered(|ui| {
+                    if ui.button("Close").clicked() {
+                        close = true;
+                    }
+                });
+            });
+            if close {
+                self.payload = None;
+            }
+        }
+    }
+}
+
+enum ModalPayload {
+    Error { context: &'static str, msg: String },
 }
 
 pub type SlotExistArray = [bool; 5];
@@ -134,6 +173,8 @@ impl App {
                 slot_exist_array: [false; 5],
                 bge_path,
                 map_info,
+                modal: Default::default(),
+                file_dialog: Default::default(),
             },
             None => Self {
                 save_path: Default::default(),
@@ -142,6 +183,8 @@ impl App {
                 slot_exist_array: [false; 5],
                 bge_path,
                 map_info,
+                modal: Default::default(),
+                file_dialog: Default::default(),
             },
         }
     }
@@ -163,5 +206,16 @@ impl eframe::App for App {
                 }
             }
         });
+        self.file_dialog.update(ctx);
+        if let Some(path) = self.file_dialog.take_picked() {
+            match Sav::load_from_file(&path) {
+                Ok(sav) => {
+                    self.sav = Some(sav);
+                    self.save_path = path;
+                }
+                Err(e) => self.modal.err("Error loading file", e),
+            }
+        }
+        self.modal.update(ctx);
     }
 }

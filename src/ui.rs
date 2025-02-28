@@ -22,15 +22,8 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
             app.sav = Some(Sav::default());
         }
         if ui.button("🗁 Load file...").clicked() {
-            if let Some(path) = rfd::FileDialog::default().pick_file() {
-                match Sav::load_from_file(&path) {
-                    Ok(sav) => {
-                        app.sav = Some(sav);
-                        app.save_path = path;
-                    }
-                    Err(e) => err_msg(e),
-                }
-            }
+            ui.close_menu();
+            app.file_dialog.pick_file();
         }
         if let Some(path) = &app.bge_path {
             if ui
@@ -43,7 +36,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
                             let sav = match Sav::load_from_file(&sav_path) {
                                 Ok(sav) => sav,
                                 Err(e) => {
-                                    err_msg(e);
+                                    app.modal.err("Error loading file", e);
                                     break;
                                 }
                             };
@@ -91,13 +84,13 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
         {
             match Sav::load_from_file(&app.save_path) {
                 Ok(sav) => app.sav = Some(sav),
-                Err(e) => err_msg(e),
+                Err(e) => app.modal.err("Error loading file", e),
             }
         }
         if let Some(sav) = &app.sav {
             if ui.button("💾 Save").on_hover_text("Ctrl+S").clicked() || ctrl_s {
                 if let Err(e) = sav.save_to_file(&app.save_path) {
-                    err_msg(e);
+                    app.modal.err("Error saving file", e);
                 }
             }
         }
@@ -116,13 +109,6 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
             }
         });
     }
-}
-
-fn err_msg(e: std::io::Error) {
-    rfd::MessageDialog::new()
-        .set_title("Error")
-        .set_description(&e.to_string())
-        .show();
 }
 
 fn update_pw_bufs(pw_bufs: &mut [String; 30], sav: &Sav) {

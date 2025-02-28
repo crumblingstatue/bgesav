@@ -20,7 +20,7 @@ const ENTRY_LEN: u64 = 64;
 impl IndexEntry {
     pub fn write_to_index(&self, path: &Path, slot: u8) -> std::io::Result<()> {
         let mut f = OpenOptions::new().write(true).open(path)?;
-        f.seek(SeekFrom::Start(slot as u64 * ENTRY_LEN))?;
+        f.seek(SeekFrom::Start(u64::from(slot) * ENTRY_LEN))?;
         f.write_u8(1)?;
         f.seek(SeekFrom::Current(7))?;
         f.write_u16::<LE>(self.location)?;

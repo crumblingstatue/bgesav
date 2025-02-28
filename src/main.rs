@@ -1,4 +1,4 @@
-#![warn(clippy::unwrap_used)]
+#![warn(clippy::unwrap_used, clippy::pedantic)]
 
 use {
     egui_file_dialog::FileDialog,
@@ -116,7 +116,7 @@ impl Default for UiState {
         Self {
             tab: Tab::Inventory,
             inv_tab: InvTab::Jade,
-            map_filter: Default::default(),
+            map_filter: String::default(),
             sync_pearls: true,
             password_bufs: std::array::from_fn(|_| String::new()),
         }
@@ -179,17 +179,17 @@ impl App {
                 bge_path,
                 map_info,
                 modal,
-                file_dialog: Default::default(),
+                file_dialog: FileDialog::default(),
             },
             None => Self {
-                save_path: Default::default(),
-                sav: Default::default(),
+                save_path: PathBuf::default(),
+                sav: None,
                 ui_state: UiState::default(),
                 slot_exist_array: [false; 5],
                 bge_path,
                 map_info,
                 modal,
-                file_dialog: Default::default(),
+                file_dialog: FileDialog::default(),
             },
         }
     }

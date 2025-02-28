@@ -51,15 +51,15 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
                 for (i, slot) in app.slot_exist_array.iter_mut().enumerate() {
                     *slot = path.join(format!("slot{i}.sav")).exists();
                 }
-            };
+            }
             if let Some(sav) = &app.sav {
                 ui.menu_button("Save to slot...", |ui| {
                     for i in 0..5 {
                         if ui.button(format!("Slot {i}")).clicked() {
                             eprintln!("{:?}", sav.save_to_file(&path.join(format!("slot{i}.sav"))));
                             let idx_en = IndexEntry {
-                                location: sav.current_map as u16,
-                                entrance: sav.map_entry as u16,
+                                location: u16::from(sav.current_map),
+                                entrance: u16::from(sav.map_entry),
                                 play_time: 1, // TODO: Fetch from save file
                             };
                             eprintln!("{:?}", idx_en.write_to_index(&path.join("sally.idx"), i));
@@ -392,9 +392,9 @@ fn pw_encode(text: &str) -> Password {
 fn pw_digit(ascii: u8) -> i32 {
     let ascii = ascii.to_ascii_lowercase();
     if ascii.is_ascii_digit() {
-        (ascii - b'0') as i32 + 27
+        i32::from(ascii - b'0') + 27
     } else if ascii.is_ascii_lowercase() {
-        (ascii - b'a') as i32 + 1
+        i32::from(ascii - b'a') + 1
     } else {
         0
     }

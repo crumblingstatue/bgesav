@@ -35,10 +35,6 @@ impl SaveDatum for bool {
     }
 
     fn to_repr(&self) -> Self::Repr {
-        if *self {
-            1
-        } else {
-            0
-        }
+        if *self { 1 } else { 0 }
     }
 }

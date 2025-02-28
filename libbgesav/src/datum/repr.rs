@@ -1,5 +1,5 @@
 use {
-    byteorder::{ReadBytesExt, WriteBytesExt, LE},
+    byteorder::{LE, ReadBytesExt, WriteBytesExt},
     std::io::{self, Read, Write},
 };
 

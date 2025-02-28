@@ -1,7 +1,7 @@
 //! `sally.idx` file holds the save index that lists save files.
 
 use {
-    byteorder::{WriteBytesExt, LE},
+    byteorder::{LE, WriteBytesExt},
     std::{
         fs::OpenOptions,
         io::{Seek, SeekFrom},

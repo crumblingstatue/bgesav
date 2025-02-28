@@ -1,9 +1,9 @@
 use {
     crate::{
+        App, InvTab, Tab, UiState,
         bitmanip_yet_again::Bitmanip,
         metadata::{self, map::MapInfo},
         sally_idx::IndexEntry,
-        App, InvTab, Tab, UiState,
     },
     eframe::egui::{self, Ui},
     libbgesav::{FollowState, Inventory, Password, Sav},

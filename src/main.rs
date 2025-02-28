@@ -1,7 +1,7 @@
 #![warn(clippy::unwrap_used)]
 
 use {
-    metadata::map::{fill_map_info, MapInfo},
+    metadata::map::{MapInfo, fill_map_info},
     std::{collections::HashMap, error::Error},
 };
 

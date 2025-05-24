@@ -363,7 +363,7 @@ pub(crate) fn passwords(sav: &mut Sav, ui_state: &mut UiState, ui: &mut Ui) {
             {
                 *pw = pw_encode(&ui_state.password_bufs[i]);
             }
-            if (i + 1) % 5 == 0 {
+            if (i + 1) % 3 == 0 {
                 ui.end_row();
             }
         }

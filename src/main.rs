@@ -155,7 +155,7 @@ impl App {
                     } else {
                         modal.err(
                             "Error trying to find BG&E",
-                            format!("Directory doesn't exist ({path:?})"),
+                            format!("Directory doesn't exist ({})", path.display()),
                         );
                     }
                 }

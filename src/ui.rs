@@ -27,7 +27,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
         }
         if let Some(path) = &app.bge_path {
             if ui
-                .menu_button("Load slot...", |ui| {
+                .menu_button("Load slot ⏷", |ui| {
                     ui.style_mut().wrap_mode = Some(egui::TextWrapMode::Extend);
                     for (i, &exists) in app.slot_exist_array.iter().enumerate() {
                         if exists && ui.button(format!("Slot {i}")).clicked() {
@@ -53,7 +53,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
                 }
             }
             if let Some(sav) = &app.sav {
-                ui.menu_button("Save to slot...", |ui| {
+                ui.menu_button("Save to slot ⏷", |ui| {
                     for i in 0..5 {
                         if ui.button(format!("Slot {i}")).clicked() {
                             eprintln!("{:?}", sav.save_to_file(&path.join(format!("slot{i}.sav"))));

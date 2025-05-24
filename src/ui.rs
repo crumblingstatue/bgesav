@@ -98,22 +98,26 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
     ui.separator();
     if let Some(sav) = &app.sav {
         ui.horizontal(|ui| {
-            ui.selectable_value(&mut app.ui_state.tab, Tab::Inventory, " Inventory");
-            ui.separator();
-            ui.selectable_value(&mut app.ui_state.tab, Tab::Map, "🗺 Map");
-            ui.separator();
-            ui.selectable_value(&mut app.ui_state.tab, Tab::Party, "👊 Party");
-            ui.separator();
-            ui.selectable_value(&mut app.ui_state.tab, Tab::MDisk, "💿 MDisk");
-            ui.separator();
-            if ui
-                .selectable_value(&mut app.ui_state.tab, Tab::Passwords, "🔑 Passwords")
-                .clicked()
-            {
-                update_pw_bufs(&mut app.ui_state.password_bufs, sav);
-            }
+            tabs_ui(&mut app.ui_state, ui, sav);
         });
         ui.add_space(2.0);
+    }
+}
+
+fn tabs_ui(ui_state: &mut UiState, ui: &mut Ui, sav: &Sav) {
+    ui.selectable_value(&mut ui_state.tab, Tab::Inventory, " Inventory");
+    ui.separator();
+    ui.selectable_value(&mut ui_state.tab, Tab::Map, "🗺 Map");
+    ui.separator();
+    ui.selectable_value(&mut ui_state.tab, Tab::Party, "👊 Party");
+    ui.separator();
+    ui.selectable_value(&mut ui_state.tab, Tab::MDisk, "💿 MDisk");
+    ui.separator();
+    if ui
+        .selectable_value(&mut ui_state.tab, Tab::Passwords, "🔑 Passwords")
+        .clicked()
+    {
+        update_pw_bufs(&mut ui_state.password_bufs, sav);
     }
 }
 

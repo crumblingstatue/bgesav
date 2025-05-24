@@ -377,8 +377,12 @@ fn pw_decode(pw: &Password, buf: &mut String) {
         }
         match usize::try_from(digit - 1) {
             Ok(idx) => {
-                let ch = metadata::password::CHARSET[idx];
-                buf.push(ch as char);
+                if let Some(ch) = metadata::password::CHARSET.get(idx).copied() {
+                    buf.push(ch as char);
+                } else {
+                    eprintln!("Error: Failed to index with password digit (out of bounds)");
+                    buf.push('?');
+                }
             }
             Err(e) => {
                 eprintln!("Error: Failed to convert password digit ({digit}) to index: {e}");

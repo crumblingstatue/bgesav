@@ -49,7 +49,7 @@ fn main() {
 
 struct App {
     save_path: PathBuf,
-    sav: Option<Sav>,
+    sav: Sav,
     ui_state: UiState,
     bge_path: Option<PathBuf>,
     slot_exist_array: SlotExistArray,
@@ -173,7 +173,7 @@ impl App {
         match payload {
             Some(payload) => Self {
                 save_path: payload.path.into(),
-                sav: Some(payload.sav),
+                sav: payload.sav,
                 ui_state: UiState::default(),
                 slot_exist_array: [false; 5],
                 bge_path,
@@ -183,7 +183,7 @@ impl App {
             },
             None => Self {
                 save_path: PathBuf::default(),
-                sav: None,
+                sav: Sav::default(),
                 ui_state: UiState::default(),
                 slot_exist_array: [false; 5],
                 bge_path,
@@ -200,22 +200,18 @@ impl eframe::App for App {
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             ui::top_panel(self, ui);
         });
-        egui::CentralPanel::default().show(ctx, |ui| {
-            if let Some(sav) = &mut self.sav {
-                match self.ui_state.tab {
-                    Tab::Map => ui::map(sav, &mut self.ui_state, ui, &self.map_info),
-                    Tab::Party => ui::party(sav, ui, &self.map_info, &mut self.ui_state),
-                    Tab::MDisk => ui::mdisk(sav, ui),
-                    Tab::Inventory => ui::inventory(sav, ui, &mut self.ui_state),
-                    Tab::Passwords => ui::passwords(sav, &mut self.ui_state, ui),
-                }
-            }
+        egui::CentralPanel::default().show(ctx, |ui| match self.ui_state.tab {
+            Tab::Map => ui::map(&mut self.sav, &mut self.ui_state, ui, &self.map_info),
+            Tab::Party => ui::party(&mut self.sav, ui, &self.map_info, &mut self.ui_state),
+            Tab::MDisk => ui::mdisk(&mut self.sav, ui),
+            Tab::Inventory => ui::inventory(&mut self.sav, ui, &mut self.ui_state),
+            Tab::Passwords => ui::passwords(&mut self.sav, &mut self.ui_state, ui),
         });
         self.file_dialog.update(ctx);
         if let Some(path) = self.file_dialog.take_picked() {
             match Sav::load_from_file(&path) {
                 Ok(sav) => {
-                    self.sav = Some(sav);
+                    self.sav = sav;
                     self.save_path = path;
                 }
                 Err(e) => self.modal.err("Error loading file", e),

@@ -19,7 +19,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
     ui.label(s);
     ui.horizontal(|ui| {
         if ui.button("🗋 Create clean").clicked() {
-            app.sav = Some(Sav::default());
+            app.sav = Sav::default();
         }
         if ui.button("🗁 Load file...").clicked() {
             ui.close_menu();
@@ -40,7 +40,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
                                     break;
                                 }
                             };
-                            app.sav = Some(sav);
+                            app.sav = sav;
                             app.save_path = sav_path;
                         }
                     }
@@ -52,22 +52,24 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
                     *slot = path.join(format!("slot{i}.sav")).exists();
                 }
             }
-            if let Some(sav) = &app.sav {
-                ui.menu_button("💾 Save to slot ⏷", |ui| {
-                    for i in 0..5 {
-                        if ui.button(format!("Slot {i}")).clicked() {
-                            eprintln!("{:?}", sav.save_to_file(&path.join(format!("slot{i}.sav"))));
-                            let idx_en = IndexEntry {
-                                location: u16::from(sav.current_map),
-                                entrance: u16::from(sav.map_entry),
-                                play_time: 1, // TODO: Fetch from save file
-                            };
-                            eprintln!("{:?}", idx_en.write_to_index(&path.join("sally.idx"), i));
-                            ui.close_menu();
-                        }
+            ui.menu_button("💾 Save to slot ⏷", |ui| {
+                for i in 0..5 {
+                    if ui.button(format!("Slot {i}")).clicked() {
+                        eprintln!(
+                            "{:?}",
+                            app.sav.save_to_file(&path.join(format!("slot{i}.sav")))
+                        );
+                        let idx_en = IndexEntry {
+                            location: u16::from(app.sav.current_map),
+                            entrance: u16::from(app.sav.map_entry),
+                            play_time: 1, // TODO: Fetch from save file
+                        };
+                        eprintln!("{:?}", idx_en.write_to_index(&path.join("sally.idx"), i));
+                        ui.close_menu();
                     }
-                });
-            }
+                }
+            });
+
             if ui.button("📂 Open save dir").clicked() {
                 eprintln!("{:?}", open::that(path));
             }
@@ -83,25 +85,21 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
             && (ui.button("⟲ Reload").on_hover_text("Ctrl+R").clicked() || ctrl_r)
         {
             match Sav::load_from_file(&app.save_path) {
-                Ok(sav) => app.sav = Some(sav),
+                Ok(sav) => app.sav = sav,
                 Err(e) => app.modal.err("Error loading file", e),
             }
         }
-        if let Some(sav) = &app.sav {
-            if ui.button("💾 Save").on_hover_text("Ctrl+S").clicked() || ctrl_s {
-                if let Err(e) = sav.save_to_file(&app.save_path) {
-                    app.modal.err("Error saving file", e);
-                }
+        if ui.button("💾 Save").on_hover_text("Ctrl+S").clicked() || ctrl_s {
+            if let Err(e) = app.sav.save_to_file(&app.save_path) {
+                app.modal.err("Error saving file", e);
             }
         }
     });
     ui.separator();
-    if let Some(sav) = &app.sav {
-        ui.horizontal(|ui| {
-            tabs_ui(&mut app.ui_state, ui, sav);
-        });
-        ui.add_space(2.0);
-    }
+    ui.horizontal(|ui| {
+        tabs_ui(&mut app.ui_state, ui, &app.sav);
+    });
+    ui.add_space(2.0);
 }
 
 fn tabs_ui(ui_state: &mut UiState, ui: &mut Ui, sav: &Sav) {

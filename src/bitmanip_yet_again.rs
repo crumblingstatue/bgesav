@@ -5,6 +5,7 @@ pub trait Bitmanip {
     /// Whether the nth bit is set
     fn nth_bit_set(&self, n: usize) -> bool;
     /// Set the nth bit on or off
+    #[cfg_attr(not(test), expect(dead_code, reason = "Could be useful in future"))]
     fn set_nth_bit(&mut self, n: usize, on: bool);
     /// Toggle the nth bit
     fn toggle_nth_bit(&mut self, n: usize);

@@ -27,7 +27,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
         }
         if let Some(path) = &app.bge_path {
             if ui
-                .menu_button("Load slot ⏷", |ui| {
+                .menu_button("🗁 Load slot ⏷", |ui| {
                     ui.style_mut().wrap_mode = Some(egui::TextWrapMode::Extend);
                     for (i, &exists) in app.slot_exist_array.iter().enumerate() {
                         if exists && ui.button(format!("Slot {i}")).clicked() {
@@ -53,7 +53,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
                 }
             }
             if let Some(sav) = &app.sav {
-                ui.menu_button("Save to slot ⏷", |ui| {
+                ui.menu_button("💾 Save to slot ⏷", |ui| {
                     for i in 0..5 {
                         if ui.button(format!("Slot {i}")).clicked() {
                             eprintln!("{:?}", sav.save_to_file(&path.join(format!("slot{i}.sav"))));
@@ -68,7 +68,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
                     }
                 });
             }
-            if ui.button("Open save dir").clicked() {
+            if ui.button("📂 Open save dir").clicked() {
                 eprintln!("{:?}", open::that(path));
             }
         }
@@ -98,17 +98,22 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
     ui.separator();
     if let Some(sav) = &app.sav {
         ui.horizontal(|ui| {
-            ui.selectable_value(&mut app.ui_state.tab, Tab::Inventory, "Inventory");
-            ui.selectable_value(&mut app.ui_state.tab, Tab::Map, "Map");
-            ui.selectable_value(&mut app.ui_state.tab, Tab::Party, "Party");
-            ui.selectable_value(&mut app.ui_state.tab, Tab::MDisk, "MDisk");
+            ui.selectable_value(&mut app.ui_state.tab, Tab::Inventory, " Inventory");
+            ui.separator();
+            ui.selectable_value(&mut app.ui_state.tab, Tab::Map, "🗺 Map");
+            ui.separator();
+            ui.selectable_value(&mut app.ui_state.tab, Tab::Party, "👊 Party");
+            ui.separator();
+            ui.selectable_value(&mut app.ui_state.tab, Tab::MDisk, "💿 MDisk");
+            ui.separator();
             if ui
-                .selectable_value(&mut app.ui_state.tab, Tab::Passwords, "Passwords")
+                .selectable_value(&mut app.ui_state.tab, Tab::Passwords, "🔑 Passwords")
                 .clicked()
             {
                 update_pw_bufs(&mut app.ui_state.password_bufs, sav);
             }
         });
+        ui.add_space(2.0);
     }
 }
 

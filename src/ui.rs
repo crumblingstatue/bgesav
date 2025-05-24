@@ -375,8 +375,16 @@ fn pw_decode(pw: &Password, buf: &mut String) {
         if digit == 0 {
             break;
         }
-        let ch = metadata::password::CHARSET[(digit - 1) as usize];
-        buf.push(ch as char);
+        match usize::try_from(digit - 1) {
+            Ok(idx) => {
+                let ch = metadata::password::CHARSET[idx];
+                buf.push(ch as char);
+            }
+            Err(e) => {
+                eprintln!("Error: Failed to convert password digit ({digit}) to index: {e}");
+                buf.push('?');
+            }
+        }
     }
 }
 

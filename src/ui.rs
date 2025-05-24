@@ -18,7 +18,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
     };
     ui.label(s);
     ui.horizontal(|ui| {
-        if ui.button("Create clean save").clicked() {
+        if ui.button("🗋 Create clean").clicked() {
             app.sav = Some(Sav::default());
         }
         if ui.button("🗁 Load file...").clicked() {

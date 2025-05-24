@@ -1,4 +1,3 @@
-#![feature(min_specialization, array_try_from_fn)]
 #![warn(clippy::pedantic)]
 #![expect(clippy::missing_errors_doc)]
 

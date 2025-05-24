@@ -62,14 +62,20 @@ impl<const N: usize> DatumRepr for [i32; N] {
     }
 }
 
-impl<T: DatumRepr, const N: usize> DatumRepr for [T; N] {
-    default fn read<R: Read>(src: &mut R) -> io::Result<Self> {
-        std::array::try_from_fn(|_| T::read(src))
+// I wanted to use specialization here, but since I also want this to build on
+// stable Rust, I changed it to a manual implementation.
+impl DatumRepr for [[i32; 7]; 30] {
+    fn read<R: Read>(src: &mut R) -> io::Result<Self> {
+        let mut buf = [[0i32; 7]; 30];
+        for arr in &mut buf {
+            *arr = <[i32; 7] as DatumRepr>::read(src)?;
+        }
+        Ok(buf)
     }
 
-    default fn write<W: Write>(self, dst: &mut W) -> io::Result<()> {
-        for item in self {
-            item.write(dst)?;
+    fn write<W: Write>(self, dst: &mut W) -> io::Result<()> {
+        for arr in self {
+            arr.write(dst)?;
         }
         Ok(())
     }

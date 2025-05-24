@@ -95,6 +95,7 @@ pub(crate) fn top_panel(app: &mut App, ui: &mut Ui) {
             }
         }
     });
+    ui.separator();
     if let Some(sav) = &app.sav {
         ui.horizontal(|ui| {
             ui.selectable_value(&mut app.ui_state.tab, Tab::Inventory, "Inventory");
